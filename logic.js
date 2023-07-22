@@ -66,6 +66,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
     {
         if(buildingVisible === true)
         {
+            gsap.to('#button-building', {scale: 0.95, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.add('button-building-pressed');
             floorB.visible = true;
             building.visible = false;
@@ -76,6 +77,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
             buildingVisible = false;
         } else
         {
+            gsap.to('#button-building', {scale: 0.95, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.remove('button-building-pressed');
             floorB.visible = false;
             building.visible = true;

@@ -6,7 +6,7 @@
 
 :root {
     /* --canvas-background: radial-gradient(circle at center, #b9c7c2 0%, #a9b8c5 100%); */
-    --canvas-background: radial-gradient(circle at center, #565f63 0%, #3e4450 100%);
+    --canvas-background: radial-gradient(circle at center, #667175 0%, #515969 100%);
     --gcpmsp-color: #330066;
     --top-height: calc(var(--logo-size) + var(--logo-margin) * 2);
     --logo-size: 50px;
@@ -85,7 +85,7 @@
 .menu {
     width: 100%;
     height: calc(var(--menu-button-size) + var(--menu-button-border) * 2);
-    bottom: 5px;
+    bottom: 10px;
     left: 0px;
     position: absolute;
     display: flex;
@@ -103,7 +103,7 @@
     background-image: url('/assets/building-x.svg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 90%;
+    background-size: 85%;
     box-shadow: 0 0 5px #2e2f30;
     cursor: pointer;
 }

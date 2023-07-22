@@ -176,7 +176,7 @@ function initCameraControls()
     cameraControls.truckSpeed = 2.35;
     cameraControls.dollySpeed = 0.75;
     // Camera target boundary box
-    const boundaryBoxSize = new THREE.Vector3(8, 3, 6);
+    const boundaryBoxSize = new THREE.Vector3(8, 2, 6);
     const minPoint = new THREE.Vector3().subVectors(cameraTarget, boundaryBoxSize);
     const maxPoint = new THREE.Vector3().addVectors(cameraTarget, boundaryBoxSize);
     const boundaryBox = new THREE.Box3(minPoint, maxPoint);

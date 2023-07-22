@@ -9,15 +9,15 @@ export let settings =
     pixelRatio: 2,
     taaActive: true,
     taaLevel: 2,
-    exposure: 1,
-    brightness: 0,
-    contrast: 0,
+    exposure: 0.9,
+    brightness: -0.02,
+    contrast: 0.02,
     axisVisibility: false
 };
 // Camera
 export let cam = 
 {
-    FOV: 40,
+    FOV: 45,
     rotateY: -20,
     rotateX: 43,
     fitSphere: false,
