@@ -87,12 +87,12 @@ composer.addPass(bcPass); // BrightnessContrast needs to be last
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 if (isMobile)
 {
-    // gui.cam.fitSphereRadius = 8;
+    gui.cam.fitSphereRadius = 8;
     logic.toggleDeviceBlock();
     loadApp();
 } else
 {
-    // gui.cam.fitSphereRadius = 6;
+    gui.cam.fitSphereRadius = 6.5;
     logic.toggleDeviceBlock();
     loadApp();
 };
