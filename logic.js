@@ -31,7 +31,7 @@ export function updateLoadingBar (progress, startDelay)
 };
 
 ///// Update actions /////
-export function updateActions (scene, materialList, meshName, meshList, mixer, animationList)
+export function updateActions (scene, materialsList, meshName, meshList, mixer, animationList)
 {
     // Hide objects
     for (meshName in meshList)
@@ -45,11 +45,11 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
     const building = scene.getObjectByName('Static_Building');
     const floorB = scene.getObjectByName('Static_Floor_b');
     // Prepare materials
-    const keypadAMat = materialList['M_KeyPad_a'];
-    const keypadBMat = materialList['M_KeyPad_b'];
-    const keypadCMat = materialList['M_KeyPad_c'];
-    const keypadDMat = materialList['M_KeyPad_d'];
-    const keypadEMat = materialList['M_KeyPad_e'];
+    const keypadAMat = materialsList['M_KeyPad_a'];
+    const keypadBMat = materialsList['M_KeyPad_b'];
+    const keypadCMat = materialsList['M_KeyPad_c'];
+    const keypadDMat = materialsList['M_KeyPad_d'];
+    const keypadEMat = materialsList['M_KeyPad_e'];
     // Prepare animations
     const DoorAAction = mixer.clipAction(animationList.find((anim) => anim.name === 'Door_a_Action'));
     const DoorBAction = mixer.clipAction(animationList.find((anim) => anim.name === 'Door_b_Action'));

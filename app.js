@@ -14,7 +14,7 @@ import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastS
 import * as logic from './logic.js';
 import * as gui from './gui.js';
 
-let sceneBounds, cameraBounds, cameraTarget, mixer, animationList, meshName, meshList = {}, materialName, materialList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
+let sceneBounds, cameraBounds, cameraTarget, mixer, animationList, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
 let manager, startDelay = 750, scene, camera, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
 
@@ -24,15 +24,15 @@ manager.onLoad = () =>
 {
     // console.log(scene);
     // console.log(meshList);
-    // console.log(materialList);
+    console.log(materialsList);
     // console.log(animationList);
     console.log('Three R' + THREE.REVISION);
     // Start application
     initCameraControls();
     setTimeout(() =>
     {   
-        gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialList);
-        logic.updateActions(scene, materialList, meshName, meshList, mixer, animationList);
+        gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList);
+        logic.updateActions(scene, materialsList, meshName, meshList, mixer, animationList);
         renderScene();
     }, startDelay);
 };
@@ -123,16 +123,16 @@ function loadApp ()
                 }
                 // Create material list
                 materialName = object.material.name;
-                if (!materialList[materialName])
+                if (!materialsList[materialName])
                 {
-                    materialList[materialName] = object.material;
+                    materialsList[materialName] = object.material;
                 }
             }
         });
         // Apply textures anisotropy
-        for (materialName in materialList)
+        for (materialName in materialsList)
         {
-            const material = materialList[materialName];
+            const material = materialsList[materialName];
             if (material.map)
             {
                 material.map.anisotropy = maxAnisotropy;
@@ -145,7 +145,7 @@ function loadApp ()
             {
                 material.roughnessMap.anisotropy = maxAnisotropy;
             }
-        }
+        };
     });
 
     // Loading HDRI environment
