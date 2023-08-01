@@ -117,7 +117,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                 {
                     if (doorAClosed === true)
                     {
-                        DoorAAction.timeScale = 1
+                        DoorAAction.timeScale = 1;
                         DoorAAction.paused = false;
                         DoorAAction.play().setLoop(1, 0).clampWhenFinished = true;
                         keypadAMat.emissive.set(0x09ff00);
@@ -125,7 +125,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                     }
                     else
                     {
-                        DoorAAction.timeScale = -1
+                        DoorAAction.timeScale = -1;
                         DoorAAction.paused = false;
                         setTimeout (() => {keypadAMat.emissive.set(0xFF0002)}, 1500);
                         doorAClosed = true;
@@ -139,7 +139,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                 {
                     if (doorBClosed === true)
                     {
-                        DoorBAction.timeScale = 1
+                        DoorBAction.timeScale = 1;
                         DoorBAction.paused = false;
                         DoorBAction.play().setLoop(1, 0).clampWhenFinished = true;
                         keypadBMat.emissive.set(0x09ff00);
@@ -147,7 +147,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                     }
                     else
                     {
-                        DoorBAction.timeScale = -1
+                        DoorBAction.timeScale = -1;
                         DoorBAction.paused = false;
                         setTimeout (() => {keypadBMat.emissive.set(0xFF0002)}, 1500);
                         doorBClosed = true;
@@ -161,7 +161,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                 {
                     if (doorCClosed === true)
                     {
-                        DoorCAction.timeScale = 1
+                        DoorCAction.timeScale = 1;
                         DoorCAction.paused = false;
                         DoorCAction.play().setLoop(1, 0).clampWhenFinished = true;
                         keypadCMat.emissive.set(0x09ff00);
@@ -169,7 +169,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                     }
                     else
                     {
-                        DoorCAction.timeScale = -1
+                        DoorCAction.timeScale = -1;
                         DoorCAction.paused = false;
                         setTimeout (() => {keypadCMat.emissive.set(0xFF0002)}, 1500);
                         doorCClosed = true;
@@ -183,7 +183,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                 {
                     if (doorDClosed === true)
                     {
-                        DoorDAction.timeScale = 1
+                        DoorDAction.timeScale = 1;
                         DoorDAction.paused = false;
                         DoorDAction.play().setLoop(1, 0).clampWhenFinished = true;
                         keypadDMat.emissive.set(0x09ff00);
@@ -191,7 +191,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                     }
                     else
                     {
-                        DoorDAction.timeScale = -1
+                        DoorDAction.timeScale = -1;
                         DoorDAction.paused = false;
                         setTimeout (() => {keypadDMat.emissive.set(0xFF0002)}, 1500);
                         doorDClosed = true;
@@ -205,7 +205,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                 {
                     if (doorEClosed === true)
                     {
-                        DoorEAction.timeScale = 1
+                        DoorEAction.timeScale = 1;
                         DoorEAction.paused = false;
                         DoorEAction.play().setLoop(1, 0).clampWhenFinished = true;
                         keypadEMat.emissive.set(0x09ff00);
@@ -213,7 +213,7 @@ export function updateActions (scene, materialList, meshName, meshList, mixer, a
                     }
                     else
                     {
-                        DoorEAction.timeScale = -1
+                        DoorEAction.timeScale = -1;
                         DoorEAction.paused = false;
                         setTimeout (() => {keypadEMat.emissive.set(0xFF0002)}, 1500);
                         doorEClosed = true;

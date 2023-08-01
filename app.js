@@ -22,7 +22,7 @@ let manager, startDelay = 750, scene, camera, width, height, renderer, composer,
 manager = new THREE.LoadingManager();
 manager.onLoad = () =>
 {
-    console.log(scene);
+    // console.log(scene);
     // console.log(meshList);
     // console.log(materialList);
     // console.log(animationList);
@@ -31,7 +31,7 @@ manager.onLoad = () =>
     initCameraControls();
     setTimeout(() =>
     {   
-        gui.initGUI(renderer, composer, taaPass, outputPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialList);
+        gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialList);
         logic.updateActions(scene, materialList, meshName, meshList, mixer, animationList);
         renderScene();
     }, startDelay);
@@ -53,7 +53,8 @@ camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 0.3, 100);
 ///// Renderer /////
 renderer = new THREE.WebGLRenderer({powerPreference: "high-performance", antialias: false, alpha: true});
 renderer.setClearColor(0x000000, 0);
-renderer.useLegacyLights = false;
+renderer.toneMapping = gui.settings.tonemapping;
+renderer.toneMappingExposure = gui.settings.exposure;
 renderer.setPixelRatio(gui.settings.pixelRatio);
 renderer.setSize(width, height);
 canvas.appendChild(renderer.domElement);
@@ -71,8 +72,7 @@ taaPass.sampleLevel = gui.settings.taaLevel;
 taaPass.unbiased = false; // false - for better performance
 taaPass.enabled = gui.settings.taaActive;
 // Output pass
-outputPass = new OutputPass(3); // LinearToneMapping = 1; ReinhardToneMapping = 2; CineonToneMapping = 3; ACESFilmicToneMapping = 4;
-outputPass.toneMappingExposure = gui.settings.exposure;
+outputPass = new OutputPass();
 // BrightnessContrast
 bcPass = new ShaderPass(BrightnessContrastShader);
 bcPass.uniforms["brightness"].value = gui.settings.brightness;

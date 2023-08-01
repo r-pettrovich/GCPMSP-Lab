@@ -9,6 +9,7 @@ export let settings =
     pixelRatio: 2,
     taaActive: true,
     taaLevel: 2,
+    tonemapping: 3, // LinearToneMapping = 1 ReinhardToneMapping = 2 CineonToneMapping = 3 ACESFilmicToneMapping = 4
     exposure: 0.9,
     brightness: -0.02,
     contrast: 0.02,
@@ -30,7 +31,7 @@ export let mat =
 }
 
 // Main function
-export function initGUI(renderer, composer, taaPass, outputPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialList)
+export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialList)
 {
     const pane = new Pane({container: document.getElementById('gui')});
     pane.registerPlugin(EssentialsPlugin);
@@ -65,12 +66,19 @@ export function initGUI(renderer, composer, taaPass, outputPass, bcPass, scene, 
     {
         taaPass.sampleLevel = ev.value;
     });
+    // Tonemapping
+    Settings.addInput(settings, 'tonemapping',
+    {options: {'LinearToneMapping': 1, 'ReinhardToneMapping': 2, 'CineonToneMapping': 3, 'ACESFilmicToneMapping': 4}, label: 'ToneMapping'})
+    .on('change', (ev) =>
+    {
+        renderer.toneMapping = ev.value;
+    });
     // Exposure
     Settings.addInput(settings, 'exposure',
     {min: 0, max: 2, label: 'Exposure'})
     .on('change', (ev) =>
     {
-        outputPass.toneMappingExposure = ev.value;
+        renderer.toneMappingExposure = Math.pow (ev.value, 4.0);
     });
     // Brightness
     Settings.addInput(settings, 'brightness',
