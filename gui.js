@@ -6,13 +6,12 @@ export let fps;
 ///// Settings variables /////
 export let settings =
 {
-    pixelRatio: 2,
-    taaActive: true,
+    pixelRatio: Math.min(window.devicePixelRatio, 3),
     taaLevel: 2,
     tonemapping: 3, // LinearToneMapping = 1 ReinhardToneMapping = 2 CineonToneMapping = 3 ACESFilmicToneMapping = 4
-    exposure: 0.9,
-    brightness: -0.02,
-    contrast: 0.15,
+    exposure: 0.95,
+    brightness: -0.05,
+    contrast: 0.2,
     axisVisibility: false
 };
 // Camera
@@ -40,7 +39,7 @@ let mats =
     plasticGrayC: 0x737F8A,
     plasticGrayR: 1,
     ceramicC: 0xF9F6EB,
-    ceramicR: 1,
+    ceramicR: 0.45,
     metalC: 0xAAB1B7,
     metalR: 0.5,
     aoIntensity: 0.65,
@@ -74,12 +73,6 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     {
         renderer.setPixelRatio(ev.value);
         composer.setPixelRatio(ev.value);
-    });
-    // TAA toggle
-    Settings.addInput(settings, 'taaActive', {label: 'TAA'})
-    .on('change', (ev) =>
-    {
-        taaPass.enabled = ev.value;
     });
     // TAA level
     Settings.addInput(settings, 'taaLevel', {options: {'0 - (1 Sample)': 0, '1 - (2 Samples)': 1, '2 - (4 Samples)': 2, '3 - (8 Samples)': 3, '4 - (16 Samples)': 4, '5 - (32 Samples)': 5}, label: 'TAA Level'})

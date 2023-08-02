@@ -11,6 +11,7 @@ import {TAARenderPass} from 'three/addons/postprocessing/TAARenderPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastShader.js';
+import WebGL from 'three/addons/capabilities/WebGL.js';
 import * as logic from './logic.js';
 import * as gui from './gui.js';
 
@@ -24,7 +25,7 @@ manager.onLoad = () =>
 {
     // console.log(scene);
     // console.log(meshList);
-    console.log(materialsList);
+    // console.log(materialsList);
     // console.log(animationList);
     console.log('Three R' + THREE.REVISION);
     // Start application
@@ -45,32 +46,31 @@ manager.onProgress = (url, itemsLoaded, itemsTotal) =>
 ///// Scene /////
 const clock = new THREE.Clock();
 scene = new THREE.Scene();
+scene.background = new THREE.Color(0x667175);
 width = window.innerWidth;
 height = window.innerHeight;
 const canvas = document.getElementById('webgl');
 camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 0.3, 100);
 
 ///// Renderer /////
-renderer = new THREE.WebGLRenderer({powerPreference: "high-performance", antialias: false, alpha: true});
-renderer.setClearColor(0x000000, 0);
+renderer = new THREE.WebGLRenderer();
 renderer.toneMapping = gui.settings.tonemapping;
 renderer.toneMappingExposure = gui.settings.exposure;
-renderer.setPixelRatio(gui.settings.pixelRatio);
 renderer.setSize(width, height);
+renderer.setPixelRatio(gui.settings.pixelRatio);
 canvas.appendChild(renderer.domElement);
 maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
 
 ///// Postprocess /////
 composer = new EffectComposer(renderer);
-composer.setPixelRatio(gui.settings.pixelRatio);
 composer.setSize(width, height);
+composer.setPixelRatio(gui.settings.pixelRatio);
 // Render pass
 renderPass = new RenderPass(scene, camera);
 // TAA
 taaPass = new TAARenderPass(scene, camera);
 taaPass.sampleLevel = gui.settings.taaLevel;
 taaPass.unbiased = false; // false - for better performance
-taaPass.enabled = gui.settings.taaActive;
 // Output pass
 outputPass = new OutputPass();
 // BrightnessContrast
@@ -100,6 +100,13 @@ if (isMobile)
 ///// Loading application /////
 function loadApp ()
 {
+    // Checking for WebGL 2.0 compatibility
+    /* if (WebGL.isWebGL2Available() === false)
+    {
+        document.body.appendChild(WebGL.getWebGL2ErrorMessage());
+        return;
+    }; */
+
     // Loading scene
     const ktx2 = new KTX2Loader().setTranscoderPath('./assets/').detectSupport(renderer);
     const gltfLoader = new GLTFLoader(manager);
@@ -197,10 +204,10 @@ window.addEventListener('resize', () =>
     height = window.innerHeight;
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    renderer.setPixelRatio(gui.settings.pixelRatio);
     renderer.setSize(width, height);
-    composer.setPixelRatio(gui.settings.pixelRatio);
+    renderer.setPixelRatio(gui.settings.pixelRatio);
     composer.setSize(width, height);
+    composer.setPixelRatio(gui.settings.pixelRatio);
 });
 
 ///// Render /////
