@@ -31,7 +31,7 @@ export function updateLoadingBar (progress, startDelay)
 };
 
 ///// Update actions /////
-export function updateActions (scene, materialsList, meshName, meshList, mixer, animationList)
+export function updateActions (scene, cameraControls, cameraBounds, frameTarget, materialsList, meshName, meshList, mixer, animationList)
 {
     // Hide objects
     for (meshName in meshList)
@@ -75,17 +75,31 @@ export function updateActions (scene, materialsList, meshName, meshList, mixer, 
                 object.layers.set(1);
             });
             buildingVisible = false;
+            // Camera
+            cameraControls.minDistance = 6;
+            cameraBounds.center.copy(frameTarget);
+            cameraBounds.radius = 3.3;
+            cameraControls.setLookAt(6.5, 4.66, 0.62, frameTarget.x, frameTarget.y, frameTarget.z, true);
+            cameraControls.fitToSphere(cameraBounds, true);
         } else
         {
             gsap.to('#button-building', {scale: 0.95, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.remove('button-building-pressed');
-            floorB.visible = false;
-            building.visible = true;
+            // floorB.visible = false;
+            // building.visible = true;
             building.traverse((object) =>
             {
                 object.layers.set(0);
             });
-            buildingVisible = true;
+            setTimeout(() =>
+            {
+                floorB.visible = false;
+                building.visible = true;
+                buildingVisible = true;
+            }, 250);
+            // Camera
+            cameraControls.minDistance = 10;
+            cameraControls.reset(true);
         }
     });
 
@@ -261,37 +275,3 @@ export function raycast (scene, camera)
     raycaster.setFromCamera(pointer, camera);
     intersects = raycaster.intersectObjects(scene.children);
 };
-
-
-
-
-// let buttonCamera = document.getElementById('button_camera');
-// let buttonZones = document.getElementById('button_zones');
-
-// Toggle camera projection
-// buttonCamera.addEventListener('click', () =>
-// {
-//     if(cameraProjection === 'persp')
-//     {
-//         buttonCamera.classList.add('lab-menu-button-camera-pressed');
-//         cameraProjection = 'ortho';
-//     } else
-//     {
-//         buttonCamera.classList.remove('lab-menu-button-camera-pressed');
-//         cameraProjection = 'persp';
-//     }
-// });
-
-// Toggle zones description
-// buttonZones.addEventListener('click', () =>
-// {
-//     if(zonesVisible === false)
-//     {
-//         buttonZones.classList.add('lab-menu-button-zones-pressed');
-//         zonesVisible = true;
-//     } else
-//     {
-//         buttonZones.classList.remove('lab-menu-button-zones-pressed');
-//         zonesVisible = false;
-//     }
-// });

@@ -1,4 +1,4 @@
-import './style.css'
+import './style.css';
 import * as THREE from 'three';
 import {GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
@@ -15,7 +15,7 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 import * as logic from './logic.js';
 import * as gui from './gui.js';
 
-let sceneBounds, cameraBounds, cameraTarget, mixer, animationList, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
+let cameraBounds, sceneTarget, frameTarget, mixer, animationList, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
 let manager, startDelay = 750, scene, camera, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
 
@@ -33,7 +33,7 @@ manager.onLoad = () =>
     setTimeout(() =>
     {   
         gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList);
-        logic.updateActions(scene, materialsList, meshName, meshList, mixer, animationList);
+        logic.updateActions(scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationList);
         renderScene();
     }, startDelay);
 };
@@ -46,7 +46,7 @@ manager.onProgress = (url, itemsLoaded, itemsTotal) =>
 ///// Scene /////
 const clock = new THREE.Clock();
 scene = new THREE.Scene();
-scene.background = new THREE.Color(0x667175);
+scene.background = new THREE.Color(0x768388);
 width = window.innerWidth;
 height = window.innerHeight;
 const canvas = document.getElementById('webgl');
@@ -92,7 +92,7 @@ if (isMobile)
     loadApp();
 } else
 {
-    gui.cam.fitSphereRadius = 6.5;
+    gui.cam.fitSphereRadius = 6.7;
     logic.toggleDeviceBlock();
     loadApp();
 };
@@ -156,7 +156,7 @@ function loadApp ()
     });
 
     // Loading HDRI environment
-    new RGBELoader(manager).load('./assets/Environment.hdr',
+    new RGBELoader(manager).load('./assets/environment.hdr',
     (hdri) =>
     {
         pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -167,34 +167,36 @@ function loadApp ()
         // scene.background = hdri;
         pmremGenerator.dispose();
     });
-}; 
+};
 
 ///// Camera Controls /////
 function initCameraControls()
 {
     cameraControls = new CameraControls(camera, canvas);
-    cameraTarget = new THREE.Vector3(1, 0, -4.65);
+    sceneTarget = new THREE.Vector3(0.65, 0.8, -4.65);
+    frameTarget = new THREE.Vector3(-0.025, 0.8, -3.5);
     // Settings
     cameraControls.mouseButtons.middle = CameraControls.ACTION.TRUCK;
-    cameraControls.minDistance = 2;
-    cameraControls.maxDistance = 80;
+    cameraControls.minDistance = 10;
+    cameraControls.maxDistance = 50;
     cameraControls.maxPolarAngle = 90 * (Math.PI / 180);
     cameraControls.azimuthRotateSpeed = 0.55;
     cameraControls.truckSpeed = 2.35;
     cameraControls.dollySpeed = 0.75;
+    // cameraControls.smoothTime = 0.3;
     // Camera target boundary box
-    const boundaryBoxSize = new THREE.Vector3(8, 2, 6);
-    const minPoint = new THREE.Vector3().subVectors(cameraTarget, boundaryBoxSize);
-    const maxPoint = new THREE.Vector3().addVectors(cameraTarget, boundaryBoxSize);
+    const boundaryBoxSize = new THREE.Vector3(6, 2, 6);
+    const minPoint = new THREE.Vector3().subVectors(sceneTarget, boundaryBoxSize);
+    const maxPoint = new THREE.Vector3().addVectors(sceneTarget, boundaryBoxSize);
     const boundaryBox = new THREE.Box3(minPoint, maxPoint);
     cameraControls.setBoundary(boundaryBox);
     // Init position
-    sceneBounds  = new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12));
-    cameraBounds = CameraControls.createBoundingSphere(sceneBounds);
-    cameraBounds.center.copy(cameraTarget);
+    cameraBounds = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
+    cameraBounds.center.copy(sceneTarget);
     cameraBounds.radius = gui.cam.fitSphereRadius;
-    cameraControls.rotateTo(gui.cam.rotateY * (Math.PI / 180), gui.cam.rotateX * (Math.PI / 180), true)
+    cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
     cameraControls.fitToSphere(cameraBounds, true);
+    cameraControls.saveState();
 };
 
 ///// Window resized /////

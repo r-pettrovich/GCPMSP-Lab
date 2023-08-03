@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300&display=swap');
+
 /* removes tap blinking and interface scaling on ios devices */
 * {
     -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -5,7 +7,8 @@
 }
 
 :root {
-    --canvas-background: radial-gradient(circle at center, #667175 0%, #515969 100%);
+    /* --canvas-background: radial-gradient(circle at center, #667175 0%, #515969 100%); */
+    --canvas-background: #768388;
     --gcpmsp-color: #330066;
     --top-height: calc(var(--logo-size) + var(--logo-margin) * 2);
     --logo-size: 50px;
@@ -78,6 +81,7 @@
 }
 
 .label-p{
+    font-family: 'Source Sans 3', sans-serif;
     margin: 0px;
 }
 

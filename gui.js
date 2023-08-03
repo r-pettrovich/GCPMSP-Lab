@@ -8,10 +8,10 @@ export let settings =
 {
     pixelRatio: Math.min(window.devicePixelRatio, 3),
     taaLevel: 2,
-    tonemapping: 3, // LinearToneMapping = 1 ReinhardToneMapping = 2 CineonToneMapping = 3 ACESFilmicToneMapping = 4
-    exposure: 0.95,
-    brightness: -0.05,
-    contrast: 0.2,
+    tonemapping: 4, // LinearToneMapping = 1 ReinhardToneMapping = 2 CineonToneMapping = 3 ACESFilmicToneMapping = 4
+    exposure: 1.05,
+    brightness: 0.00,
+    contrast: 0.12,
     axisVisibility: false
 };
 // Camera
@@ -21,27 +21,27 @@ export let cam =
     rotateY: -20,
     rotateX: 43,
     fitSphere: false,
-    fitSphereRadius: 6.5
+    fitSphereRadius: 6.7
 };
 // Materails
 let mats = 
 {
-    plasterWhiteC: 0xCFD4E0,
+    plasterWhiteC: 0xd2d2cb,
     plasterWhiteR: 1,
-    plasterBeigeC: 0xd8b493,
+    plasterBeigeC: 0xe2bf9a,
     plasterBeigeR: 1,
-    linoleumC: 0x7D815E,
+    linoleumC: 0x71796f,
     linoleumR: 1,
-    plasticWhiteC: 0xe5ebeb,
+    plasticWhiteC: 0xe4e5e8,
     plasticWhiteR: 1,
-    plasticBeigeC: 0xe9efd8,
+    plasticBeigeC: 0xe8ebd7,
     plasticBeigeR: 1,
-    plasticGrayC: 0x737F8A,
+    plasticGrayC: 0x808a95,
     plasticGrayR: 1,
-    ceramicC: 0xF9F6EB,
-    ceramicR: 0.45,
-    metalC: 0xAAB1B7,
-    metalR: 0.5,
+    ceramicC: 0xd2d0cd,
+    ceramicR: 0.3,
+    metalC: 0xb1b4b5,
+    metalR: 0.45,
     aoIntensity: 0.65,
 }
 
@@ -90,7 +90,7 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     Settings.addInput(settings, 'exposure', {min: 0, max: 2, label: 'Exposure'})
     .on('change', (ev) =>
     {
-        renderer.toneMappingExposure = Math.pow (ev.value, 4.0);
+        renderer.toneMappingExposure = ev.value;
     });
     // Brightness
     Settings.addInput(settings, 'brightness', {min: -1, max: 0, label: 'Brightness'})
@@ -125,18 +125,6 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
         camera.fov = ev.value;
         camera.updateProjectionMatrix();
     });
-    // Rotate Y
-    Camera.addInput(cam, 'rotateY', {min: -360, max: 0, label: 'Rotate Y'})
-    .on('change', (ev) =>
-    {
-        cameraControls.rotateAzimuthTo((ev.value * (Math.PI / 180)), 0, true);
-    });
-    // Rotate X
-    Camera.addInput(cam, 'rotateX', {min: 0, max: 90, label: 'Rotate X'})
-    .on('change', (ev) =>
-    {
-        cameraControls.rotatePolarTo((ev.value * (Math.PI / 180)), 0, true);
-    });
     // Fit sphere radius
     Camera.addInput(cam, 'fitSphereRadius', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius'})
     .on('change', (ev) =>
@@ -144,20 +132,14 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
         cameraBounds.radius = ev.value;
         cameraControls.fitToSphere(cameraBounds, false);
     });
+    // Get camera position button
+    Camera.addButton({title: 'Get Camera Position'})
+    .on('click', () =>
+    {
+        console.log(cameraControls.getPosition());
+    });
 
     ///// Materials /////
-    // AO intensity
-    Materials.addInput(mats, 'aoIntensity', {min: 0, max: 2, label: 'AO Intensity'})
-    .on('change', (ev) =>
-    {
-        for (materialName in materialsList)
-        {
-            if (materialsList[materialName].aoMap)
-            {
-                materialsList[materialName].aoMapIntensity = ev.value;
-            }
-        }
-    });
     // Plaster white color
     PlasterWhite.addInput(mats, 'plasterWhiteC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
@@ -253,6 +235,18 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     .on('change', (ev) =>
     {
         materialsList.M_Metal.roughness = ev.value;
+    });
+    // AO intensity
+    Materials.addInput(mats, 'aoIntensity', {min: 0, max: 2, label: 'AO Intensity'})
+    .on('change', (ev) =>
+    {
+        for (materialName in materialsList)
+        {
+            if (materialsList[materialName].aoMap)
+            {
+                materialsList[materialName].aoMapIntensity = ev.value;
+            }
+        }
     });
 
     ///// Init material parameters /////

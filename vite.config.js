@@ -3,7 +3,7 @@ export default {
     publicDir: './public',
     build:
     {
-        outDir: './build',
+        outDir: './dist',
         chunkSizeWarningLimit: 2000,
     },
     server:
