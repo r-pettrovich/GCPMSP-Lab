@@ -2,10 +2,9 @@ import {gsap} from 'gsap';
 import {Raycaster, Vector2} from 'three';
 
 let intersects, raycaster = new Raycaster(), pointer = new Vector2();
-let doorAClosed = true, doorBClosed = true, doorCClosed = true,
-doorDClosed = true, doorEClosed = true, WindowAClosed = true;
+let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true;
 let buildingVisible = true, zonesVisible = false;
-let buttonBuilding = document.getElementById('button-building');
+let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones');
 
 ///// Toggle device block /////
 export function toggleDeviceBlock ()
@@ -31,19 +30,22 @@ export function updateLoadingBar (progress, startDelay)
 };
 
 ///// Update actions /////
-export function updateActions (scene, cameraControls, cameraBounds, frameTarget, materialsList, meshName, meshList, mixer, animationList)
+export function updateActions (scene, cameraControls, cameraBounds, frameTarget, materialsList, meshName, meshList, mixer, animationsList)
 {
     // Hide objects
     for (meshName in meshList)
     {
-        if (meshName.includes('Collision') || meshName.includes('Floor_b') || meshName.includes('Zones'))
+        if (meshName.includes('Collision') || meshName.includes('Static_Floor_Frame') || meshName.includes('Zones'))
         {
             meshList[meshName].visible = false;
         }
     };
     //Prepare objects
     const building = scene.getObjectByName('Static_Building');
-    const floorB = scene.getObjectByName('Static_Floor_b');
+    const floorBuilding = scene.getObjectByName('Static_Floor_Building');
+    const floorFrame = scene.getObjectByName('Static_Floor_Frame');
+    const zonesBuilding = scene.getObjectByName('Zones_Building');
+    const zonesFrame = scene.getObjectByName('Zones_Frame');
     // Prepare materials
     const keypadAMat = materialsList['M_KeyPad_a'];
     const keypadBMat = materialsList['M_KeyPad_b'];
@@ -51,59 +53,91 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
     const keypadDMat = materialsList['M_KeyPad_d'];
     const keypadEMat = materialsList['M_KeyPad_e'];
     // Prepare animations
-    const DoorAAction = mixer.clipAction(animationList.find((anim) => anim.name === 'Door_a_Action'));
-    const DoorBAction = mixer.clipAction(animationList.find((anim) => anim.name === 'Door_b_Action'));
-    const DoorCAction = mixer.clipAction(animationList.find((anim) => anim.name === 'Door_c_Action'));
-    const DoorDAction = mixer.clipAction(animationList.find((anim) => anim.name === 'Door_d_Action'));
-    const DoorEAction = mixer.clipAction(animationList.find((anim) => anim.name === 'Door_e_Action'));
-    const Window_a_Action = mixer.clipAction(animationList.find((anim) => anim.name === 'Window_a_Action'));
-    const Window_a_Handle_Action = mixer.clipAction(animationList.find((anim) => anim.name === 'Window_a_Handle_Action'));
-    const Fan_Action = mixer.clipAction(animationList.find((anim) => anim.name === 'Fan_Action'));
+    const DoorAAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_a_Action'));
+    const DoorBAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_b_Action'));
+    const DoorCAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_c_Action'));
+    const DoorDAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_d_Action'));
+    const DoorEAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_e_Action'));
+    const Window_a_Action = mixer.clipAction(animationsList.find((anim) => anim.name === 'Window_a_Action'));
+    const Window_a_Handle_Action = mixer.clipAction(animationsList.find((anim) => anim.name === 'Window_a_Handle_Action'));
+    const Fan_Action = mixer.clipAction(animationsList.find((anim) => anim.name === 'Fan_Action'));
     Fan_Action.play();
 
+    ///// UI buttons actions /////
     // Toggle building visibility
     buttonBuilding.addEventListener('click', () =>
     {
         if(buildingVisible === true)
         {
-            gsap.to('#button-building', {scale: 0.95, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.add('button-building-pressed');
-            floorB.visible = true;
+            floorFrame.visible = true;
             building.visible = false;
             building.traverse((object) =>
             {
                 object.layers.set(1);
             });
+            if(zonesVisible === true)
+            {
+                zonesBuilding.visible = false;
+            };
             buildingVisible = false;
             // Camera
             cameraControls.minDistance = 6;
             cameraBounds.center.copy(frameTarget);
-            cameraBounds.radius = 3.3;
+            cameraBounds.radius = 4;
             cameraControls.setLookAt(6.5, 4.66, 0.62, frameTarget.x, frameTarget.y, frameTarget.z, true);
             cameraControls.fitToSphere(cameraBounds, true);
         } else
         {
-            gsap.to('#button-building', {scale: 0.95, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.remove('button-building-pressed');
-            // floorB.visible = false;
-            // building.visible = true;
             building.traverse((object) =>
             {
                 object.layers.set(0);
             });
             setTimeout(() =>
             {
-                floorB.visible = false;
+                floorFrame.visible = false;
                 building.visible = true;
+                if(zonesVisible === true)
+                {
+                    zonesBuilding.visible = true;
+                };
                 buildingVisible = true;
             }, 250);
             // Camera
-            cameraControls.minDistance = 10;
+            cameraControls.minDistance = 9.5;
             cameraControls.reset(true);
         }
     });
+    // Toggle zones visibility
+    buttonZones.addEventListener('click', () =>
+    {
+        if(zonesVisible === false)
+        {
+            gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            buttonZones.classList.add('button-zones-pressed');
+            if(buildingVisible === true)
+            {
+                zonesBuilding.visible = true;
+                zonesFrame.visible = true;
+            } else
+            {
+                zonesFrame.visible = true;
+            }
+            zonesVisible = true;
+        } else
+        {
+            gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            buttonZones.classList.remove('button-zones-pressed');
+            zonesBuilding.visible = false;
+            zonesFrame.visible = false;
+            zonesVisible = false;
+        }
+    });
 
-    // Cursor 'pointer' when howering over collisions
+    ///// Cursor 'pointer' when howering over collisions /////
     document.addEventListener('mousemove', () =>
     {
         if (intersects.length > 0)
@@ -119,7 +153,7 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
         };
     })
 
-    // Handle interactive animations
+    ///// Handle interactive objects /////
     document.addEventListener('click', () =>
     {
         if (intersects.length > 0)

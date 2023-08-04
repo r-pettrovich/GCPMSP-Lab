@@ -15,7 +15,7 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 import * as logic from './logic.js';
 import * as gui from './gui.js';
 
-let cameraBounds, sceneTarget, frameTarget, mixer, animationList, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
+let cameraBounds, sceneTarget, frameTarget, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
 let manager, startDelay = 750, scene, camera, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
 
@@ -26,14 +26,14 @@ manager.onLoad = () =>
     // console.log(scene);
     // console.log(meshList);
     // console.log(materialsList);
-    // console.log(animationList);
+    // console.log(animationsList);
     console.log('Three R' + THREE.REVISION);
     // Start application
     initCameraControls();
     setTimeout(() =>
     {   
         gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList);
-        logic.updateActions(scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationList);
+        logic.updateActions(scene, cameraControls, cameraBounds, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
         renderScene();
     }, startDelay);
 };
@@ -87,7 +87,8 @@ composer.addPass(bcPass); // BrightnessContrast needs to be last
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 if (isMobile)
 {
-    gui.cam.fitSphereRadius = 8;
+    gui.cam.fitSphereRadius = 8.5;
+    taaPass.enabled = false;
     logic.toggleDeviceBlock();
     loadApp();
 } else
@@ -116,7 +117,7 @@ function loadApp ()
     {
         scene.add(gltf.scene);
         mixer = new THREE.AnimationMixer(gltf.scene);
-        animationList = gltf.animations;
+        animationsList = gltf.animations;
         // Searching for materials
         scene.traverse((object) =>
         {
@@ -177,7 +178,7 @@ function initCameraControls()
     frameTarget = new THREE.Vector3(-0.025, 0.8, -3.5);
     // Settings
     cameraControls.mouseButtons.middle = CameraControls.ACTION.TRUCK;
-    cameraControls.minDistance = 10;
+    cameraControls.minDistance = 9.5;
     cameraControls.maxDistance = 50;
     cameraControls.maxPolarAngle = 90 * (Math.PI / 180);
     cameraControls.azimuthRotateSpeed = 0.55;
@@ -210,6 +211,7 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(gui.settings.pixelRatio);
     composer.setSize(width, height);
     composer.setPixelRatio(gui.settings.pixelRatio);
+    cameraControls.fitToSphere(cameraBounds, true);
 });
 
 ///// Render /////

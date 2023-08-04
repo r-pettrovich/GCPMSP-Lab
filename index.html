@@ -9,15 +9,21 @@
   <body class="body">
     <script type="module" src="/app.js"></script>
     <div id="webgl" class="webgl"></div>
-    <div id="gui" class="gui" style="display: block;"></div>
+    <div id="gui" class="gui" style="display: none;"></div>
     <div id="top" class="top" style="display: none;">
-      <div id="logo" class="logo"></div>
       <div id="label" class="label">
-        <h3 class="label-p">Городской Центр Первичной Медико-Санитарной Помощи</h3>
+        <div id="logo" class="logo"></div>
+        <div id="title" class="title">
+        <h3 class="title-p">Городской Центр Первичной Медико-Санитарной Помощи</h3>
+      </div>
+      </div>
+      <div id="sign" class="sign">
+        <h1 class="sign-p">Выполнил Ринат Чубаров r.pettrovich@gmail.com</h1>
       </div>
     </div>
     <div id="menu" class="menu" style="display: none;">
       <div id="button-building" class="button-building" title="Скрыть/показать здание"></div>
+      <div id="button-zones" class="button-building button-zones" title="Показать/скрыть зоны"></div>
     </div>
     <div id="preloader" class="preloader">
       <div id="preloader-logo" class="preloader-logo"></div>
@@ -26,5 +32,8 @@
       </div>
     </div>
     <div id="device-block" class="device-block" style="display: block;"></div>
+    <!-- Eruda. Console for Mobile Browsers -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script> -->
   </body>
 </html>

@@ -10,11 +10,13 @@
     /* --canvas-background: radial-gradient(circle at center, #667175 0%, #515969 100%); */
     --canvas-background: #768388;
     --gcpmsp-color: #330066;
-    --top-height: calc(var(--logo-size) + var(--logo-margin) * 2);
     --logo-size: 50px;
-    --logo-margin: 6px;
-    --label-font-size: 14px;
-    --menu-button-size: 45px;
+    --logo-margin: 8px;
+    --title-width: 180px;
+    --title-font-size: 14px;
+    --sign-width: 140px;
+    --sign-font-size: 12px;
+    --menu-button-size: 50px;
     --menu-button-border: 2px;
 }
 
@@ -52,15 +54,27 @@
 
 .top {
     width: 100%;
-    height: var(--top-height);
-    min-height: var(--top-height);
+    height: calc(var(--logo-size) + var(--logo-margin) * 2);
+    /* min-height: var(--top-height); */
     top: 0px;
     left: 0px;
     position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     z-index: 1;
+}
+
+.label {
+    width: auto;
+    height: auto;
+    top: 0px;
+    left: 0px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .logo {
@@ -69,26 +83,42 @@
     position: relative;
     margin: var(--logo-margin);
     background-image: url('/assets/lab-logo.svg');
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-.label {
-    width: 280px;
+.title {
+    width: var(--title-width);
     height: auto;
     position: relative;
     color: var(--gcpmsp-color);
-    font-size: var(--label-font-size);
     user-select: none;
 }
 
-.label-p{
+.title-p{
     font-family: 'Source Sans 3', sans-serif;
+    font-size: var(--title-font-size);
+    margin: 0px;
+}
+
+.sign {
+    width: var(--sign-width);
+    height: auto;
+    position: relative;
+    color:rgb(26, 33, 37);
+    user-select: none;
+}
+
+.sign-p {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: var(--sign-font-size);
     margin: 0px;
 }
 
 .menu {
     width: 100%;
     height: calc(var(--menu-button-size) + var(--menu-button-border) * 2);
-    bottom: 10px;
+    bottom: 14px;
     left: 0px;
     position: absolute;
     display: flex;
@@ -103,16 +133,26 @@
     height: var(--menu-button-size);
     border: var(--menu-button-border) solid var(--gcpmsp-color);
     border-radius: 5px;
+    margin-right: 10px;
     background-image: url('/assets/building-x.svg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 85%;
+    background-size: 80%;
     box-shadow: 0 0 5px #2e2f30;
     cursor: pointer;
 }
 
 .button-building-pressed {
     background-image: url('/assets/building.svg');
+}
+
+.button-zones {
+    background-image: url('/assets/bookmark.svg');
+    background-size: 75%;
+}
+
+.button-zones-pressed {
+    background-image: url('/assets/bookmark-x.svg');
 }
 
 .preloader {
@@ -167,10 +207,13 @@
 
 @media (min-width: 768px) {
     :root {
-        --logo-size: 60px;
-        --logo-margin: 10px;
-        --label-font-size: 16px;
-        --menu-button-size: 60px;
+        --logo-size: 65px;
+        --logo-margin: 12px;
+        --title-width: 260px;
+        --title-font-size: 20px;
+        --sign-font-size: 16px;
+        --sign-width: 190px;
+        --menu-button-size: 55px;
         --menu-button-border: 2px;
     }
 }
