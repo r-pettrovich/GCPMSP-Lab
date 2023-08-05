@@ -40,19 +40,19 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
             meshList[meshName].visible = false;
         }
     };
-    //Prepare objects
+    //Prepare objects variables
     const building = scene.getObjectByName('Static_Building');
     const floorBuilding = scene.getObjectByName('Static_Floor_Building');
     const floorFrame = scene.getObjectByName('Static_Floor_Frame');
     const zonesBuilding = scene.getObjectByName('Zones_Building');
     const zonesFrame = scene.getObjectByName('Zones_Frame');
-    // Prepare materials
+    // Prepare materials variables
     const keypadAMat = materialsList['M_KeyPad_a'];
     const keypadBMat = materialsList['M_KeyPad_b'];
     const keypadCMat = materialsList['M_KeyPad_c'];
     const keypadDMat = materialsList['M_KeyPad_d'];
     const keypadEMat = materialsList['M_KeyPad_e'];
-    // Prepare animations
+    // Prepare animations variables
     const DoorAAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_a_Action'));
     const DoorBAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_b_Action'));
     const DoorCAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_c_Action'));
@@ -84,6 +84,7 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
             buildingVisible = false;
             // Camera
             cameraControls.minDistance = 6;
+            cameraControls.maxDistance = 30;
             cameraBounds.center.copy(frameTarget);
             cameraBounds.radius = 4;
             cameraControls.setLookAt(6.5, 4.66, 0.62, frameTarget.x, frameTarget.y, frameTarget.z, true);
@@ -108,6 +109,7 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
             }, 250);
             // Camera
             cameraControls.minDistance = 9.5;
+            cameraControls.maxDistance = 50;
             cameraControls.reset(true);
         }
     });
@@ -117,6 +119,7 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
         if(zonesVisible === false)
         {
             gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to('#zones', {yPercent: 100, opacity: 1, duration: 0.4, ease: 'power2.out'});
             buttonZones.classList.add('button-zones-pressed');
             if(buildingVisible === true)
             {
@@ -130,6 +133,7 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
         } else
         {
             gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to('#zones', {yPercent: -100, opacity: 0, duration: 0.4, ease: 'power2.in'});
             buttonZones.classList.remove('button-zones-pressed');
             zonesBuilding.visible = false;
             zonesFrame.visible = false;

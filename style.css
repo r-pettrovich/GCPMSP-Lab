@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500&display=swap');
 
 /* removes tap blinking and interface scaling on ios devices */
 * {
@@ -7,17 +7,18 @@
 }
 
 :root {
-    /* --canvas-background: radial-gradient(circle at center, #667175 0%, #515969 100%); */
     --canvas-background: #768388;
-    --gcpmsp-color: #330066;
-    --logo-size: 50px;
-    --logo-margin: 8px;
-    --title-width: 180px;
-    --title-font-size: 14px;
-    --sign-width: 140px;
-    --sign-font-size: 12px;
+    --gcpmsp-color: rgb(51, 0, 102);
+    --logo-size: 45px;
+    --logo-margin: 6px;
+    --title-width: 200px;
+    --title-font-size: 15px;
+    --sign-width: 145px;
+    --sign-font-size: 11px;
     --menu-button-size: 50px;
     --menu-button-border: 2px;
+    --menu-button-shadow: 0 0 5px rgb(46, 47, 48);
+    --zones-width: calc(100% - var(--menu-button-border) * 2);
 }
 
 .body {
@@ -39,7 +40,7 @@
     margin: 0;
     overflow: hidden;
     z-index: 0;
-    background: var(--canvas-background);
+    background-color: var(--canvas-background);
 }
 
 .gui {
@@ -98,6 +99,8 @@
 .title-p{
     font-family: 'Source Sans 3', sans-serif;
     font-size: var(--title-font-size);
+    font-weight: 500;
+    /* text-shadow: 3px 4px 2px rgba(51, 0, 102, 0.2); */
     margin: 0px;
 }
 
@@ -106,13 +109,30 @@
     height: auto;
     position: relative;
     color:rgb(26, 33, 37);
-    user-select: none;
 }
 
 .sign-p {
     font-family: 'Source Sans 3', sans-serif;
     font-size: var(--sign-font-size);
+    font-weight: 500;
     margin: 0px;
+}
+
+.zones {
+    width: var(--zones-width);
+    height: 105px;
+    position: absolute;
+    display: flex;
+    top: 0px;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    opacity: 0%;
+    background: linear-gradient(to bottom, rgb(185, 205, 212) 50%, rgb(159, 184, 184) 100%);
+    border: var(--menu-button-border) solid var(--gcpmsp-color);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    box-shadow: var(--menu-button-shadow);
+    z-index: 2;
 }
 
 .menu {
@@ -138,7 +158,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 80%;
-    box-shadow: 0 0 5px #2e2f30;
+    box-shadow: var(--menu-button-shadow);
     cursor: pointer;
 }
 
@@ -167,7 +187,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--canvas-background);
+    background-color: var(--canvas-background);
 }
 
 .preloader-logo {
@@ -209,11 +229,12 @@
     :root {
         --logo-size: 65px;
         --logo-margin: 12px;
-        --title-width: 260px;
+        --title-width: 280px;
         --title-font-size: 20px;
         --sign-font-size: 16px;
-        --sign-width: 190px;
+        --sign-width: 200px;
         --menu-button-size: 55px;
         --menu-button-border: 2px;
+        --zones-width: 400px;
     }
 }
