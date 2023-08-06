@@ -26,6 +26,7 @@ export function updateLoadingBar (progress, startDelay)
         // Toggle UI
         gsap.set('#top', {display: 'flex'});
         gsap.set('#menu', {display: 'flex'});
+        gsap.set('#zones', {display: 'flex'});
     }
 };
 

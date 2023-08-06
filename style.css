@@ -19,6 +19,10 @@
     --menu-button-border: 2px;
     --menu-button-shadow: 0 0 5px rgb(46, 47, 48);
     --zones-width: calc(100% - var(--menu-button-border) * 2);
+    --zones-label-width: 170px;
+    --zones-label-padding: 8px;
+    --zones-color-square-size: 20px;
+    --zones-p-font-size: 14px;
 }
 
 .body {
@@ -56,11 +60,9 @@
 .top {
     width: 100%;
     height: calc(var(--logo-size) + var(--logo-margin) * 2);
-    /* min-height: var(--top-height); */
     top: 0px;
     left: 0px;
     position: relative;
-    display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -96,7 +98,7 @@
     user-select: none;
 }
 
-.title-p{
+.title-p {
     font-family: 'Source Sans 3', sans-serif;
     font-size: var(--title-font-size);
     font-weight: 500;
@@ -115,24 +117,53 @@
     font-family: 'Source Sans 3', sans-serif;
     font-size: var(--sign-font-size);
     font-weight: 500;
-    margin: 0px;
 }
 
 .zones {
     width: var(--zones-width);
-    height: 105px;
+    height: 100px;
     position: absolute;
-    display: flex;
     top: 0px;
     left: 50%;
     transform: translate(-50%, -100%);
     opacity: 0%;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     background: linear-gradient(to bottom, rgb(185, 205, 212) 50%, rgb(159, 184, 184) 100%);
     border: var(--menu-button-border) solid var(--gcpmsp-color);
     border-top: none;
     border-radius: 0 0 10px 10px;
     box-shadow: var(--menu-button-shadow);
+    user-select: none;
     z-index: 2;
+}
+
+.zones-label {
+    width: var(--zones-label-width);
+    height: var(--zones-color-square-size);
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--zones-label-padding);
+}
+
+.zones-color-square {
+    width: var(--zones-color-square-size);
+    height: var(--zones-color-square-size);
+    position: relative;
+    background-color: rgb(80, 116, 231);
+    border-radius: 5px;
+    box-shadow: var(--menu-button-shadow);
+}
+
+.zones-p {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: var(--zones-p-font-size);
+    font-weight: 500;
+    margin: 0 0 0 5px;
 }
 
 .menu {
@@ -141,7 +172,6 @@
     bottom: 14px;
     left: 0px;
     position: absolute;
-    display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -235,6 +265,9 @@
         --sign-width: 200px;
         --menu-button-size: 55px;
         --menu-button-border: 2px;
-        --zones-width: 400px;
+        --zones-width: 480px;
+        --zones-label-width: 200px;
+        --zones-color-square-size: 25px;
+        --zones-p-font-size: 16px;
     }
 }
