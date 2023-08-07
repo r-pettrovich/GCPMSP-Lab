@@ -102,11 +102,11 @@ if (isMobile)
 function loadApp ()
 {
     // Checking for WebGL 2.0 compatibility
-    /* if (WebGL.isWebGL2Available() === false)
+    if (WebGL.isWebGL2Available() === false)
     {
         document.body.appendChild(WebGL.getWebGL2ErrorMessage());
         return;
-    }; */
+    };
 
     // Loading scene
     const ktx2 = new KTX2Loader().setTranscoderPath('./assets/').detectSupport(renderer);

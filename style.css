@@ -9,25 +9,28 @@
 :root {
     --canvas-background: #768388;
     --gcpmsp-color: rgb(51, 0, 102);
-    --logo-size: 45px;
-    --logo-margin: 6px;
-    --title-width: 200px;
-    --title-font-size: 15px;
+    --logo-size: 40px;
+    --logo-margin: 5px;
+    --title-width: 190px;
+    --title-font-size: 14px;
     --sign-width: 145px;
     --sign-font-size: 11px;
-    --menu-button-size: 50px;
+    --menu-button-size: 45px;
     --menu-button-border: 2px;
     --menu-button-shadow: 0 0 5px rgb(46, 47, 48);
-    --zones-width: calc(100% - var(--menu-button-border) * 2);
-    --zones-label-width: 170px;
-    --zones-label-padding: 8px;
+    --zones-width: calc(100vw - var(--menu-button-border) * 2);
+    --zones-height: 90px;
+    --zones-label-width: calc(((100vw - var(--menu-button-border) * 2) - (var(--zones-label-padding) * 4)) / 2);
+    --zones-label-padding: 10px;
     --zones-color-square-size: 20px;
-    --zones-p-font-size: 14px;
+    --zones-p-font-size: 13px;
 }
 
 .body {
     width: 100%;
     height: 100%;
+    top: 0px;
+    left: 0px;
     position: fixed;
     outline: none;
     margin: 0;
@@ -102,7 +105,6 @@
     font-family: 'Source Sans 3', sans-serif;
     font-size: var(--title-font-size);
     font-weight: 500;
-    /* text-shadow: 3px 4px 2px rgba(51, 0, 102, 0.2); */
     margin: 0px;
 }
 
@@ -121,7 +123,7 @@
 
 .zones {
     width: var(--zones-width);
-    height: 100px;
+    height: var(--zones-height);
     position: absolute;
     top: 0px;
     left: 50%;
@@ -255,6 +257,19 @@
     background-size: 40%, 100%;
 }
 
+@media (min-width: 414px) {
+    :root {
+        --logo-size: 45px;
+        --logo-margin: 6px;
+        --title-width: 200px;
+        --title-font-size: 15px;
+        --sign-font-size: 12px;
+        --menu-button-size: 50px;
+        --zones-label-width: 180px;
+        --zones-p-font-size: 14px;
+    }
+}
+
 @media (min-width: 768px) {
     :root {
         --logo-size: 65px;
@@ -266,6 +281,7 @@
         --menu-button-size: 55px;
         --menu-button-border: 2px;
         --zones-width: 480px;
+        --zones-height: 100px;
         --zones-label-width: 200px;
         --zones-color-square-size: 25px;
         --zones-p-font-size: 16px;
