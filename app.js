@@ -12,100 +12,133 @@ import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastShader.js';
 import WebGL from 'three/addons/capabilities/WebGL.js';
-import * as logic from './logic.js';
 import * as gui from './gui.js';
+import * as logic from './logic.js';
 
 let cameraBounds, sceneTarget, frameTarget, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
-let manager, startDelay = 750, scene, camera, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
+let device, orientation, appIsLoaded = false, manager, startDelay = 750, scene, camera, clock, canvas, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
 
-///// Loading manager /////
-manager = new THREE.LoadingManager();
-manager.onLoad = () =>
+init();
+function init()
 {
-    // console.log(scene);
-    // console.log(meshList);
-    // console.log(materialsList);
-    // console.log(animationsList);
-    console.log('Three R' + THREE.REVISION);
-    // Start application
-    initCameraControls();
-    setTimeout(() =>
-    {   
-        gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList);
-        logic.updateActions(scene, cameraControls, cameraBounds, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
-        renderScene();
-    }, startDelay);
+    ///// Checking for WebGL 2.0 compatibility /////
+    if (WebGL.isWebGL2Available() === false)
+    {
+        // document.body.appendChild(WebGL.getWebGL2ErrorMessage());
+        const webglBlock = document.getElementById('webgl-block');
+        webglBlock.style.display = 'flex';
+        return;
+    };
+
+    ///// Scene /////
+    clock = new THREE.Clock();
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x7c939c);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas = document.getElementById('webgl');
+    camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1, 60);
+
+    ///// Renderer /////
+    renderer = new THREE.WebGLRenderer();
+    renderer.toneMapping = gui.settings.tonemapping;
+    renderer.toneMappingExposure = gui.settings.exposure;
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(gui.settings.pixelRatio);
+    canvas.appendChild(renderer.domElement);
+    maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+
+    ///// Postprocess /////
+    composer = new EffectComposer(renderer);
+    composer.setSize(width, height);
+    composer.setPixelRatio(gui.settings.pixelRatio);
+    // Render pass
+    renderPass = new RenderPass(scene, camera);
+    // TAA
+    taaPass = new TAARenderPass(scene, camera);
+    taaPass.sampleLevel = gui.settings.taaLevel;
+    taaPass.unbiased = false; // false - for better performance
+    // Output pass
+    outputPass = new OutputPass();
+    // BrightnessContrast
+    bcPass = new ShaderPass(BrightnessContrastShader);
+    bcPass.uniforms["brightness"].value = gui.settings.brightness;
+    bcPass.uniforms["contrast"].value = gui.settings.contrast;
+    // Adding passes
+    composer.addPass(renderPass);
+    composer.addPass(taaPass);
+    composer.addPass(outputPass);
+    composer.addPass(bcPass); // BrightnessContrast needs to be last
 };
-manager.onProgress = (url, itemsLoaded, itemsTotal) =>
-{
-    const progress = itemsLoaded / itemsTotal;
-    logic.updateLoadingBar(progress, startDelay);
-};
 
-///// Scene /////
-const clock = new THREE.Clock();
-scene = new THREE.Scene();
-scene.background = new THREE.Color(0x768388);
-width = window.innerWidth;
-height = window.innerHeight;
-const canvas = document.getElementById('webgl');
-camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 0.3, 100);
-
-///// Renderer /////
-renderer = new THREE.WebGLRenderer();
-renderer.toneMapping = gui.settings.tonemapping;
-renderer.toneMappingExposure = gui.settings.exposure;
-renderer.setSize(width, height);
-renderer.setPixelRatio(gui.settings.pixelRatio);
-canvas.appendChild(renderer.domElement);
-maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-
-///// Postprocess /////
-composer = new EffectComposer(renderer);
-composer.setSize(width, height);
-composer.setPixelRatio(gui.settings.pixelRatio);
-// Render pass
-renderPass = new RenderPass(scene, camera);
-// TAA
-taaPass = new TAARenderPass(scene, camera);
-taaPass.sampleLevel = gui.settings.taaLevel;
-taaPass.unbiased = false; // false - for better performance
-// Output pass
-outputPass = new OutputPass();
-// BrightnessContrast
-bcPass = new ShaderPass(BrightnessContrastShader);
-bcPass.uniforms["brightness"].value = gui.settings.brightness;
-bcPass.uniforms["contrast"].value = gui.settings.contrast;
-// Adding passes
-composer.addPass(renderPass);
-composer.addPass(taaPass);
-composer.addPass(outputPass);
-composer.addPass(bcPass); // BrightnessContrast needs to be last
+///// Performance benchmark /////
 
 ///// Check device /////
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 if (isMobile)
 {
+    device = 'mobile';
+    gui.cam.maxDist = 45;
     gui.cam.fitSphereRadius = 8.5;
-    taaPass.enabled = false;
-    logic.toggleDeviceBlock();
-    loadApp();
+    gui.settings.taaLevel = 1;
+    // taaPass.enabled = false;
+    checkOrientation();
 } else
 {
+    device = 'desktop'
+    gui.cam.maxDist = 25;
     gui.cam.fitSphereRadius = 6.7;
-    logic.toggleDeviceBlock();
+    gui.settings.taaLevel = 2;
+    logic.toggleDeviceBlock(device, orientation);
     loadApp();
+};
+
+///// Check orientation /////
+function checkOrientation()
+{
+    if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === false)
+    {
+        orientation = 'portrait';
+        logic.toggleDeviceBlock(device, orientation);
+        loadApp();
+        appIsLoaded = true;
+    } else if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === true)
+    {
+        orientation = 'portrait';
+        logic.toggleDeviceBlock(device, orientation);
+    } else if (window.matchMedia('(orientation: landscape)').matches)
+    {
+        orientation = 'landscape'
+        logic.toggleDeviceBlock(device, orientation);
+    };
 };
 
 ///// Loading application /////
 function loadApp ()
 {
-    // Checking for WebGL 2.0 compatibility
-    if (WebGL.isWebGL2Available() === false)
+    // Manager
+    manager = new THREE.LoadingManager();
+    manager.onLoad = () =>
     {
-        document.body.appendChild(WebGL.getWebGL2ErrorMessage());
-        return;
+        // console.log(scene);
+        // console.log(meshList);
+        // console.log(materialsList);
+        // console.log(animationsList);
+        console.log('Three R' + THREE.REVISION);
+        // Start application
+        initCameraControls();
+        setTimeout(() =>
+        {   
+            gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList);
+            logic.updateActions(device, scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
+            renderScene();
+        }, startDelay);
+    };
+    manager.onProgress = (url, itemsLoaded, itemsTotal) =>
+    {
+        const progress = itemsLoaded / itemsTotal;
+        logic.updateLoadingBar(progress, startDelay);
     };
 
     // Loading scene
@@ -178,8 +211,8 @@ function initCameraControls()
     frameTarget = new THREE.Vector3(-0.025, 0.8, -3.5);
     // Settings
     cameraControls.mouseButtons.middle = CameraControls.ACTION.TRUCK;
-    cameraControls.minDistance = 9.5;
-    cameraControls.maxDistance = 50;
+    cameraControls.minDistance = gui.cam.minDist;
+    cameraControls.maxDistance = gui.cam.maxDist;
     cameraControls.maxPolarAngle = 90 * (Math.PI / 180);
     cameraControls.azimuthRotateSpeed = 0.55;
     cameraControls.truckSpeed = 2.35;
@@ -197,12 +230,12 @@ function initCameraControls()
     cameraBounds.radius = gui.cam.fitSphereRadius;
     cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
     cameraControls.fitToSphere(cameraBounds, true);
-    cameraControls.saveState();
 };
 
 ///// Window resized /////
 window.addEventListener('resize', () =>
 {
+    checkOrientation();
     width = window.innerWidth;
     height = window.innerHeight;
     camera.aspect = width / height;

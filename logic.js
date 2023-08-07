@@ -1,5 +1,6 @@
 import {gsap} from 'gsap';
 import {Raycaster, Vector2} from 'three';
+import {settings, cam} from './gui';
 
 let intersects, raycaster = new Raycaster(), pointer = new Vector2();
 let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true;
@@ -7,9 +8,18 @@ let buildingVisible = true, zonesVisible = false;
 let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones');
 
 ///// Toggle device block /////
-export function toggleDeviceBlock ()
+export function toggleDeviceBlock (device, orientation)
 {
-    gsap.set('#device-block', {display: 'none'});
+    if (device === 'desktop')
+    {
+        gsap.set('#device-block', {display: 'none'});
+    } else if (orientation === 'portrait')
+    {
+        gsap.set('#device-block', {display: 'none'});
+    } else if (orientation === 'landscape')
+    {
+        gsap.set('#device-block', {display: 'block'});
+    }
 };
 
 ///// Update loading bar /////
@@ -31,7 +41,7 @@ export function updateLoadingBar (progress, startDelay)
 };
 
 ///// Update actions /////
-export function updateActions (scene, cameraControls, cameraBounds, frameTarget, materialsList, meshName, meshList, mixer, animationsList)
+export function updateActions (device, scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList)
 {
     // Hide objects
     for (meshName in meshList)
@@ -84,10 +94,17 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
             };
             buildingVisible = false;
             // Camera
+            if (device === 'mobile')
+            {
+                cameraControls.maxDistance = 20;
+                cameraBounds.radius = 4;
+            } else
+            {
+                cameraControls.maxDistance = 15;
+                cameraBounds.radius = 3.5;
+            }
             cameraControls.minDistance = 6;
-            cameraControls.maxDistance = 30;
             cameraBounds.center.copy(frameTarget);
-            cameraBounds.radius = 4;
             cameraControls.setLookAt(6.5, 4.66, 0.62, frameTarget.x, frameTarget.y, frameTarget.z, true);
             cameraControls.fitToSphere(cameraBounds, true);
         } else
@@ -109,9 +126,19 @@ export function updateActions (scene, cameraControls, cameraBounds, frameTarget,
                 buildingVisible = true;
             }, 250);
             // Camera
-            cameraControls.minDistance = 9.5;
-            cameraControls.maxDistance = 50;
-            cameraControls.reset(true);
+            if (device === 'mobile')
+            {
+                cameraControls.maxDistance = 45;
+                cameraBounds.radius = 8.5;
+            } else
+            {
+                cameraControls.maxDistance = 25;
+                cameraBounds.radius = 6.7;
+            }
+            cameraControls.minDistance = cam.minDist;
+            cameraBounds.center.copy(sceneTarget);
+            cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
+            cameraControls.fitToSphere(cameraBounds, true);
         }
     });
     // Toggle zones visibility

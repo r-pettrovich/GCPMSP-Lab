@@ -49,7 +49,12 @@
         <div id="preloader-bar" class="preloader-bar"></div>
       </div>
     </div>
-    <div id="device-block" class="device-block" style="display: block;"></div>
+    <div id="device-block" class="device-block" style="display: none;"></div>
+    <div id="webgl-block" class="preloader" style="z-index: 200; display: none;">
+      <div id="webgl-block-logo" class="webgl-block-logo"></div>
+      <p class="webgl-block-p">WebGL 2.0 incompatible device.</p>
+      <p class="webgl-block-p">Устройство не поддерживает технологию WebGL 2.0, необходимую для работы приложения.</p>
+    </div>
     <!-- Eruda. Console for Mobile Browsers -->
     <!-- <script src="//cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script> -->

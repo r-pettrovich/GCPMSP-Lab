@@ -20,8 +20,9 @@ export let cam =
     FOV: 45,
     rotateY: -20,
     rotateX: 43,
-    fitSphere: false,
-    fitSphereRadius: 6.7
+    fitSphereRadius: 6.7,
+    minDist: 9.5,
+    maxDist: 30
 };
 // Materails
 let mats = 

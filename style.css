@@ -7,7 +7,7 @@
 }
 
 :root {
-    --canvas-background: #768388;
+    --canvas-background: #7c939c;
     --gcpmsp-color: rgb(51, 0, 102);
     --logo-size: 40px;
     --logo-margin: 5px;
@@ -254,7 +254,24 @@
     background: url('/assets/rotate-device.svg'), var(--canvas-background);
     background-repeat: no-repeat;
     background-position: center, center;
-    background-size: 40%, 100%;
+    background-size: 30%, 100%;
+}
+
+.webgl-block-logo {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 8px;
+    position: relative;
+    background-image: url('/assets/warning.svg');
+}
+
+.webgl-block-p {
+    color: rgb(49, 49, 49);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 0 0;
+    text-align: center;
 }
 
 @media (min-width: 414px) {
