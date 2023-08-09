@@ -7,7 +7,7 @@ export let fps;
 export let settings =
 {
     pixelRatio: Math.min(window.devicePixelRatio, 3),
-    taaLevel: 2,
+    taaLevel: 1,
     tonemapping: 4, // LinearToneMapping = 1 ReinhardToneMapping = 2 CineonToneMapping = 3 ACESFilmicToneMapping = 4
     exposure: 1.05,
     brightness: 0.00,
@@ -18,11 +18,7 @@ export let settings =
 export let cam = 
 {
     FOV: 45,
-    rotateY: -20,
-    rotateX: 43,
-    fitSphereRadius: 6.7,
-    minDist: 9.5,
-    maxDist: 30
+    radius: 6.7,
 };
 // Materails
 let mats = 
@@ -44,7 +40,7 @@ let mats =
     metalC: 0xb1b4b5,
     metalR: 0.45,
     aoIntensity: 0.65,
-}
+};
 
 ///// Main function /////
 export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList)
@@ -79,6 +75,7 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     Settings.addInput(settings, 'taaLevel', {options: {'0 - (1 Sample)': 0, '1 - (2 Samples)': 1, '2 - (4 Samples)': 2, '3 - (8 Samples)': 3, '4 - (16 Samples)': 4, '5 - (32 Samples)': 5}, label: 'TAA Level'})
     .on('change', (ev) =>
     {
+        taaPass.enabled = true;
         taaPass.sampleLevel = ev.value;
     });
     // Tonemapping
@@ -127,7 +124,7 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
         camera.updateProjectionMatrix();
     });
     // Fit sphere radius
-    Camera.addInput(cam, 'fitSphereRadius', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius'})
+    Camera.addInput(cam, 'radius', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius'})
     .on('change', (ev) =>
     {
         cameraBounds.radius = ev.value;

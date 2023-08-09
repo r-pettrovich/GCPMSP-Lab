@@ -1,5 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
+import WebGL from 'three/addons/capabilities/WebGL.js';
+import {getGPUTier} from 'detect-gpu';
 import {GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
@@ -11,15 +13,15 @@ import {TAARenderPass} from 'three/addons/postprocessing/TAARenderPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastShader.js';
-import WebGL from 'three/addons/capabilities/WebGL.js';
 import * as gui from './gui.js';
 import * as logic from './logic.js';
 
 let cameraBounds, sceneTarget, frameTarget, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
-let device, orientation, appIsLoaded = false, manager, startDelay = 750, scene, camera, clock, canvas, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
+let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, camera, clock, canvas, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
 
 init();
+initCameraControls();
 function init()
 {
     ///// Checking for WebGL 2.0 compatibility /////
@@ -73,25 +75,69 @@ function init()
 };
 
 ///// Performance benchmark /////
+(async () =>
+{
+    const gpu = await getGPUTier();
+    gpuTier = gpu.tier;
+    checkDevice();
+})();
 
 ///// Check device /////
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-if (isMobile)
+function checkDevice()
 {
-    device = 'mobile';
-    gui.cam.maxDist = 45;
-    gui.cam.fitSphereRadius = 8.5;
-    gui.settings.taaLevel = 1;
-    // taaPass.enabled = false;
-    checkOrientation();
-} else
-{
-    device = 'desktop'
-    gui.cam.maxDist = 25;
-    gui.cam.fitSphereRadius = 6.7;
-    gui.settings.taaLevel = 2;
-    logic.toggleDeviceBlock(device, orientation);
-    loadApp();
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile)
+    {
+        device = 'mobile';
+        // Camera init settings
+        cameraControls.maxDistance = 45;
+        cameraBounds.radius = 8.5;
+        gui.cam.radius = 8.5;
+        // Quality settings
+        if (gpuTier === 1)
+        {
+            taaPass.enabled = false;
+            gui.settings.taaLevel = 0;
+            console.log(gpuTier);
+        } else if (gpuTier === 2)
+        {
+            taaPass.enabled = false;
+            gui.settings.taaLevel = 0;
+            console.log(gpuTier);
+        } else if (gpuTier === 3)
+        {
+            taaPass.sampleLevel = 1;
+            gui.settings.taaLevel = 1;
+            console.log(gpuTier);
+        };
+        checkOrientation();
+    } else
+    {
+        device = 'desktop'
+        // Camera init settings
+        cameraControls.maxDistance = 25;
+        cameraBounds.radius = 6.7;
+        gui.cam.radius = 6.7;
+        // Quality settings
+        if (gpuTier === 1)
+        {
+            taaPass.enabled = false;
+            gui.settings.taaLevel = 0;
+            console.log(gpuTier);
+        } else if (gpuTier === 2)
+        {
+            taaPass.sampleLevel = 2;
+            gui.settings.taaLevel = 2;
+            console.log(gpuTier);
+        } else if (gpuTier === 3)
+        {
+            taaPass.sampleLevel = 3;
+            gui.settings.taaLevel = 3;
+            console.log(gpuTier);
+        };
+        logic.toggleDeviceBlock(device, orientation);
+        loadApp();
+    };
 };
 
 ///// Check orientation /////
@@ -100,9 +146,9 @@ function checkOrientation()
     if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === false)
     {
         orientation = 'portrait';
+        appIsLoaded = true;
         logic.toggleDeviceBlock(device, orientation);
         loadApp();
-        appIsLoaded = true;
     } else if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === true)
     {
         orientation = 'portrait';
@@ -115,7 +161,7 @@ function checkOrientation()
 };
 
 ///// Loading application /////
-function loadApp ()
+function loadApp()
 {
     // Manager
     manager = new THREE.LoadingManager();
@@ -127,9 +173,9 @@ function loadApp ()
         // console.log(animationsList);
         console.log('Three R' + THREE.REVISION);
         // Start application
-        initCameraControls();
         setTimeout(() =>
-        {   
+        {
+            cameraControls.fitToSphere(cameraBounds, true);
             gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList);
             logic.updateActions(device, scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
             renderScene();
@@ -211,8 +257,7 @@ function initCameraControls()
     frameTarget = new THREE.Vector3(-0.025, 0.8, -3.5);
     // Settings
     cameraControls.mouseButtons.middle = CameraControls.ACTION.TRUCK;
-    cameraControls.minDistance = gui.cam.minDist;
-    cameraControls.maxDistance = gui.cam.maxDist;
+    cameraControls.minDistance = 9.5;
     cameraControls.maxPolarAngle = 90 * (Math.PI / 180);
     cameraControls.azimuthRotateSpeed = 0.55;
     cameraControls.truckSpeed = 2.35;
@@ -227,9 +272,8 @@ function initCameraControls()
     // Init position
     cameraBounds = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
     cameraBounds.center.copy(sceneTarget);
-    cameraBounds.radius = gui.cam.fitSphereRadius;
+    cameraBounds.radius = gui.cam.radius;
     cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
-    cameraControls.fitToSphere(cameraBounds, true);
 };
 
 ///// Window resized /////

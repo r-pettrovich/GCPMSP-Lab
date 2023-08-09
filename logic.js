@@ -1,6 +1,5 @@
 import {gsap} from 'gsap';
 import {Raycaster, Vector2} from 'three';
-import {settings, cam} from './gui';
 
 let intersects, raycaster = new Raycaster(), pointer = new Vector2();
 let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true;
@@ -135,7 +134,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
                 cameraControls.maxDistance = 25;
                 cameraBounds.radius = 6.7;
             }
-            cameraControls.minDistance = cam.minDist;
+            cameraControls.minDistance = 9.5;
             cameraBounds.center.copy(sceneTarget);
             cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
             cameraControls.fitToSphere(cameraBounds, true);
