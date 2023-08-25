@@ -40,10 +40,10 @@ function init()
     width = window.innerWidth;
     height = window.innerHeight;
     canvas = document.getElementById('webgl');
-    camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1, 60);
+    camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1, 100);
 
     ///// Renderer /////
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: false}); //logarithmicDepthBuffer fixes Apple AO flickering bug, but causing performance drop
     renderer.toneMapping = gui.settings.tonemapping;
     renderer.toneMappingExposure = gui.settings.exposure;
     renderer.setSize(width, height);
@@ -98,17 +98,17 @@ function checkDevice()
         {
             taaPass.enabled = false;
             gui.settings.taaLevel = 0;
-            console.log(gpuTier);
+            // console.log(gpuTier);
         } else if (gpuTier === 2)
         {
             taaPass.enabled = false;
             gui.settings.taaLevel = 0;
-            console.log(gpuTier);
+            // console.log(gpuTier);
         } else if (gpuTier === 3)
         {
             taaPass.sampleLevel = 1;
             gui.settings.taaLevel = 1;
-            console.log(gpuTier);
+            // console.log(gpuTier);
         };
         checkOrientation();
     } else
@@ -123,19 +123,34 @@ function checkDevice()
         {
             taaPass.enabled = false;
             gui.settings.taaLevel = 0;
-            console.log(gpuTier);
+            // console.log(gpuTier);
         } else if (gpuTier === 2)
         {
-            taaPass.sampleLevel = 2;
-            gui.settings.taaLevel = 2;
-            console.log(gpuTier);
+            if (window.devicePixelRatio == 1)
+            {
+                taaPass.sampleLevel = 2;
+                gui.settings.taaLevel = 2;
+            } else
+            {
+                taaPass.sampleLevel = 1;
+                gui.settings.taaLevel = 1;
+            }
+            // console.log(gpuTier);
         } else if (gpuTier === 3)
         {
-            taaPass.sampleLevel = 3;
-            gui.settings.taaLevel = 3;
+            if (window.devicePixelRatio == 1)
+            {
+                taaPass.sampleLevel = 3;
+                gui.settings.taaLevel = 3;
+            } else
+            {
+                taaPass.sampleLevel = 1;
+                gui.settings.taaLevel = 1;
+            }
             console.log(gpuTier);
         };
         logic.toggleDeviceBlock(device, orientation);
+        appIsLoaded = true;
         loadApp();
     };
 };
@@ -254,7 +269,7 @@ function initCameraControls()
 {
     cameraControls = new CameraControls(camera, canvas);
     sceneTarget = new THREE.Vector3(0.65, 0.8, -4.65);
-    frameTarget = new THREE.Vector3(-0.025, 0.8, -3.5);
+    frameTarget = new THREE.Vector3(-0.025, 1, -3.5);
     // Settings
     cameraControls.mouseButtons.middle = CameraControls.ACTION.TRUCK;
     cameraControls.minDistance = 9.5;

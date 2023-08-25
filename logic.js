@@ -146,7 +146,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
         if(zonesVisible === false)
         {
             gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
-            gsap.to('#zones', {yPercent: 100, opacity: 1, duration: 0.4, ease: 'power2.out'});
+            gsap.to('#zones', {yPercent: 100, opacity: 1, duration: 0.5, ease: 'power2.out'});
             buttonZones.classList.add('button-zones-pressed');
             if(buildingVisible === true)
             {
@@ -160,7 +160,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
         } else
         {
             gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
-            gsap.to('#zones', {yPercent: -100, opacity: 0, duration: 0.4, ease: 'power2.in'});
+            gsap.to('#zones', {yPercent: -100, opacity: 0, duration: 0.5, ease: 'power2.in'});
             buttonZones.classList.remove('button-zones-pressed');
             zonesBuilding.visible = false;
             zonesFrame.visible = false;
