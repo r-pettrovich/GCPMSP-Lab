@@ -94,22 +94,8 @@ function checkDevice()
         cameraBounds.radius = 8.5;
         gui.cam.radius = 8.5;
         // Quality settings
-        if (gpuTier === 1)
-        {
-            taaPass.enabled = false;
-            gui.settings.taaLevel = 0;
-            // console.log(gpuTier);
-        } else if (gpuTier === 2)
-        {
-            taaPass.enabled = false;
-            gui.settings.taaLevel = 0;
-            // console.log(gpuTier);
-        } else if (gpuTier === 3)
-        {
-            taaPass.sampleLevel = 1;
-            gui.settings.taaLevel = 1;
-            // console.log(gpuTier);
-        };
+        taaPass.enabled = false;
+        gui.settings.taaLevel = 0;
         checkOrientation();
     } else
     {
@@ -147,7 +133,7 @@ function checkDevice()
                 taaPass.sampleLevel = 1;
                 gui.settings.taaLevel = 1;
             }
-            console.log(gpuTier);
+            // console.log(gpuTier);
         };
         logic.toggleDeviceBlock(device, orientation);
         appIsLoaded = true;
