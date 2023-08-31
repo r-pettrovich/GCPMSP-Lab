@@ -40,7 +40,7 @@ function init()
     width = window.innerWidth;
     height = window.innerHeight;
     canvas = document.getElementById('webgl');
-    camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1, 100);
+    camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1.5, 100);
 
     ///// Renderer /////
     renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: false}); //logarithmicDepthBuffer fixes Apple AO flickering bug, but causing performance drop
@@ -109,7 +109,6 @@ function checkDevice()
         {
             taaPass.enabled = false;
             gui.settings.taaLevel = 0;
-            // console.log(gpuTier);
         } else if (gpuTier === 2)
         {
             if (window.devicePixelRatio == 1)
@@ -121,7 +120,6 @@ function checkDevice()
                 taaPass.sampleLevel = 1;
                 gui.settings.taaLevel = 1;
             }
-            // console.log(gpuTier);
         } else if (gpuTier === 3)
         {
             if (window.devicePixelRatio == 1)
@@ -133,7 +131,6 @@ function checkDevice()
                 taaPass.sampleLevel = 1;
                 gui.settings.taaLevel = 1;
             }
-            // console.log(gpuTier);
         };
         logic.toggleDeviceBlock(device, orientation);
         appIsLoaded = true;
@@ -173,6 +170,8 @@ function loadApp()
         // console.log(materialsList);
         // console.log(animationsList);
         console.log('Three R' + THREE.REVISION);
+        console.log('Device: ' + device);
+        console.log('GPU Tier: ' + gpuTier);
         // Start application
         setTimeout(() =>
         {

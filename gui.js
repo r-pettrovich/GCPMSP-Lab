@@ -49,7 +49,7 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     pane.registerPlugin(EssentialsPlugin);
     // FPS
     fps = pane.addBlade({view: 'fpsgraph', label: 'FPS', linecount: 2});
-    pane.addSeparator();
+    pane.addBlade({view: 'separator'});
     // Folders
     const Settings = pane.addFolder({title: 'Settings', expanded: false});
     const Camera = pane.addFolder({title: 'Camera', expanded: false});
@@ -65,45 +65,45 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
 
     ///// Settings /////
     // Pixel Ratio
-    Settings.addInput(settings, 'pixelRatio', {options: {'1x': 1, '2x': 2, 'Device PR': (Math.min(window.devicePixelRatio, 3))}, label: 'Pixel Ratio'})
+    Settings.addBinding(settings, 'pixelRatio', {options: {'1x': 1, '2x': 2, 'Device PR': (Math.min(window.devicePixelRatio, 3))}, label: 'Pixel Ratio'})
     .on('change', (ev) =>
     {
         renderer.setPixelRatio(ev.value);
         composer.setPixelRatio(ev.value);
     });
     // TAA level
-    Settings.addInput(settings, 'taaLevel', {options: {'0 - (1 Sample)': 0, '1 - (2 Samples)': 1, '2 - (4 Samples)': 2, '3 - (8 Samples)': 3, '4 - (16 Samples)': 4, '5 - (32 Samples)': 5}, label: 'TAA Level'})
+    Settings.addBinding(settings, 'taaLevel', {options: {'0 - (1 Sample)': 0, '1 - (2 Samples)': 1, '2 - (4 Samples)': 2, '3 - (8 Samples)': 3, '4 - (16 Samples)': 4, '5 - (32 Samples)': 5}, label: 'TAA Level'})
     .on('change', (ev) =>
     {
         taaPass.enabled = true;
         taaPass.sampleLevel = ev.value;
     });
     // Tonemapping
-    Settings.addInput(settings, 'tonemapping', {options: {'LinearToneMapping': 1, 'ReinhardToneMapping': 2, 'CineonToneMapping': 3, 'ACESFilmicToneMapping': 4}, label: 'ToneMapping'})
+    Settings.addBinding(settings, 'tonemapping', {options: {'LinearToneMapping': 1, 'ReinhardToneMapping': 2, 'CineonToneMapping': 3, 'ACESFilmicToneMapping': 4}, label: 'ToneMapping'})
     .on('change', (ev) =>
     {
         renderer.toneMapping = ev.value;
     });
     // Exposure
-    Settings.addInput(settings, 'exposure', {min: 0, max: 2, label: 'Exposure'})
+    Settings.addBinding(settings, 'exposure', {min: 0, max: 2, label: 'Exposure'})
     .on('change', (ev) =>
     {
         renderer.toneMappingExposure = ev.value;
     });
     // Brightness
-    Settings.addInput(settings, 'brightness', {min: -1, max: 0, label: 'Brightness'})
+    Settings.addBinding(settings, 'brightness', {min: -1, max: 0, label: 'Brightness'})
     .on('change', (ev) =>
     {
         bcPass.uniforms["brightness"].value = ev.value;
     })
     // Contrast
-    Settings.addInput(settings, 'contrast', {min: 0, max: 1, label: 'Contrast'})
+    Settings.addBinding(settings, 'contrast', {min: 0, max: 1, label: 'Contrast'})
     .on('change', (ev) =>
     {
         bcPass.uniforms["contrast"].value = ev.value;
     })
     // Axis toggle
-    Settings.addInput(settings, 'axisVisibility', {label: 'Axis Helper'})
+    Settings.addBinding(settings, 'axisVisibility', {label: 'Axis Helper'})
     .on('change', (ev) =>
     {
         if(ev.value)
@@ -117,14 +117,14 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
 
     ///// Camera /////
     // FOV
-    Camera.addInput(cam, 'FOV', {min: 30, max: 80, label: 'FOV'})
+    Camera.addBinding(cam, 'FOV', {min: 30, max: 80, label: 'FOV'})
     .on('change', (ev) =>
     {
         camera.fov = ev.value;
         camera.updateProjectionMatrix();
     });
     // Fit sphere radius
-    Camera.addInput(cam, 'radius', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius'})
+    Camera.addBinding(cam, 'radius', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius'})
     .on('change', (ev) =>
     {
         cameraBounds.radius = ev.value;
@@ -139,103 +139,103 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
 
     ///// Materials /////
     // Plaster white color
-    PlasterWhite.addInput(mats, 'plasterWhiteC', {view: 'color', label: 'Color'})
+    PlasterWhite.addBinding(mats, 'plasterWhiteC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Plaster_White.color.set(ev.value);
     });
     // Plaster white roughness
-    PlasterWhite.addInput(mats, 'plasterWhiteR', {min: 0, max: 1, label: 'Roughness'})
+    PlasterWhite.addBinding(mats, 'plasterWhiteR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Plaster_White.roughness = ev.value;
     });
     // Plaster beige color
-    PlasterBeige.addInput(mats, 'plasterBeigeC', {view: 'color', label: 'Color'})
+    PlasterBeige.addBinding(mats, 'plasterBeigeC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Plaster_Beige.color.set(ev.value);
     });
     // Plaster beige roughness
-    PlasterBeige.addInput(mats, 'plasterBeigeR', {min: 0, max: 1, label: 'Roughness'})
+    PlasterBeige.addBinding(mats, 'plasterBeigeR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Plaster_Beige.roughness = ev.value;
     });
     // Linoleum color
-    Linoleum.addInput(mats, 'linoleumC', {view: 'color', label: 'Color'})
+    Linoleum.addBinding(mats, 'linoleumC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Linoleum.color.set(ev.value);
     });
     // Linoleum roughness
-    Linoleum.addInput(mats, 'linoleumR', {min: 0, max: 1, label: 'Roughness'})
+    Linoleum.addBinding(mats, 'linoleumR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Linoleum.roughness = ev.value;
     });
     // Plastic white color
-    PlasticWhite.addInput(mats, 'plasticWhiteC', {view: 'color', label: 'Color'})
+    PlasticWhite.addBinding(mats, 'plasticWhiteC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Plastic_White.color.set(ev.value);
     });
     // Plastic white roughness
-    PlasticWhite.addInput(mats, 'plasticWhiteR', {min: 0, max: 1, label: 'Roughness'})
+    PlasticWhite.addBinding(mats, 'plasticWhiteR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Plastic_White.roughness = ev.value;
     });
     // Plastic beige color
-    PlasticBeige.addInput(mats, 'plasticBeigeC', {view: 'color', label: 'Color'})
+    PlasticBeige.addBinding(mats, 'plasticBeigeC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Plastic_Beige.color.set(ev.value);
     });
     // Plastic beige roughness
-    PlasticBeige.addInput(mats, 'plasticBeigeR', {min: 0, max: 1, label: 'Roughness'})
+    PlasticBeige.addBinding(mats, 'plasticBeigeR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Plastic_Beige.roughness = ev.value;
     });
     // Plastic gray color
-    PlasticGray.addInput(mats, 'plasticGrayC', {view: 'color', label: 'Color'})
+    PlasticGray.addBinding(mats, 'plasticGrayC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Plastic_Gray.color.set(ev.value);
     });
     // Plastic gray roughness
-    PlasticGray.addInput(mats, 'plasticGrayR', {min: 0, max: 1, label: 'Roughness'})
+    PlasticGray.addBinding(mats, 'plasticGrayR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Plastic_Gray.roughness = ev.value;
     });
     // Ceramic color
-    Ceramic.addInput(mats, 'ceramicC', {view: 'color', label: 'Color'})
+    Ceramic.addBinding(mats, 'ceramicC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Ceramic.color.set(ev.value);
     });
     // Ceramic roughness
-    Ceramic.addInput(mats, 'ceramicR', {min: 0, max: 1, label: 'Roughness'})
+    Ceramic.addBinding(mats, 'ceramicR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Ceramic.roughness = ev.value;
     });
     // Metal color
-    Metal.addInput(mats, 'metalC', {view: 'color', label: 'Color'})
+    Metal.addBinding(mats, 'metalC', {view: 'color', label: 'Color'})
     .on('change', (ev) =>
     {
         materialsList.M_Metal.color.set(ev.value);
     });
     // Metal roughness
-    Metal.addInput(mats, 'metalR', {min: 0, max: 1, label: 'Roughness'})
+    Metal.addBinding(mats, 'metalR', {min: 0, max: 1, label: 'Roughness'})
     .on('change', (ev) =>
     {
         materialsList.M_Metal.roughness = ev.value;
     });
     // AO intensity
-    Materials.addInput(mats, 'aoIntensity', {min: 0, max: 2, label: 'AO Intensity'})
+    Materials.addBinding(mats, 'aoIntensity', {min: 0, max: 2, label: 'AO Intensity'})
     .on('change', (ev) =>
     {
         for (materialName in materialsList)

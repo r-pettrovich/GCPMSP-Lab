@@ -182,7 +182,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
                 document.body.style.cursor = 'default';
             }
         };
-    })
+    });
 
     ///// Handle interactive objects /////
     document.addEventListener('click', () =>

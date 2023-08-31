@@ -12,11 +12,11 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
-    "@tweakpane/plugin-essentials": "^0.1.8",
+    "@tweakpane/plugin-essentials": "^0.2.0",
     "camera-controls": "^2.7.0",
     "detect-gpu": "^5.0.36",
     "gsap": "^3.12.2",
     "three": "^0.155.0",
-    "tweakpane": "^3.1.10"
+    "tweakpane": "^4.0.0"
   }
 }

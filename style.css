@@ -19,7 +19,7 @@
     --menu-button-border: 2px;
     --menu-button-shadow: 0 0 5px rgb(46, 47, 48);
     --zones-width: calc(100vw - var(--menu-button-border) * 2);
-    --zones-height: 90px;
+    --zones-height: 95px;
     --zones-label-width: calc(((100vw - var(--menu-button-border) * 2) - (var(--zones-label-padding) * 4)) / 2);
     --zones-label-padding: 10px;
     --zones-color-square-size: 20px;
@@ -133,7 +133,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to bottom, rgb(185, 205, 212) 50%, rgb(159, 184, 184) 100%);
+    background: linear-gradient(to bottom, rgb(179, 204, 212) 50%, rgb(187, 212, 212) 100%);
     border: var(--menu-button-border) solid var(--gcpmsp-color);
     border-top: none;
     border-radius: 0 0 10px 10px;
