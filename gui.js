@@ -39,11 +39,11 @@ let mats =
     ceramicR: 0.3,
     metalC: 0xb1b4b5,
     metalR: 0.45,
-    aoIntensity: 0.65,
+    aoIntensity: 0.65
 };
 
 ///// Main function /////
-export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControls, materialName, materialsList)
+export function initGUI(renderer, composer, taaPassP, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControlsP, materialName, materialsList)
 {
     const pane = new Pane({container: document.getElementById('gui')});
     pane.registerPlugin(EssentialsPlugin);
@@ -76,7 +76,7 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     .on('change', (ev) =>
     {
         // taaPass.enabled = true;
-        taaPass.sampleLevel = ev.value;
+        taaPassP.sampleLevel = ev.value;
     });
     // Tonemapping
     Settings.addBinding(settings, 'tonemapping', {options: {'LinearToneMapping': 1, 'ReinhardToneMapping': 2, 'CineonToneMapping': 3, 'ACESFilmicToneMapping': 4}, label: 'ToneMapping'})
@@ -128,13 +128,13 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     .on('change', (ev) =>
     {
         cameraBounds.radius = ev.value;
-        cameraControls.fitToSphere(cameraBounds, false);
+        cameraControlsP.fitToSphere(cameraBounds, false);
     });
     // Get camera position button
     Camera.addButton({title: 'Get Camera Position'})
     .on('click', () =>
     {
-        console.log(cameraControls.getPosition());
+        console.log(cameraControlsP.getPosition());
     });
 
     ///// Materials /////

@@ -40,7 +40,7 @@ export function updateLoadingBar (progress, startDelay)
 };
 
 ///// Update actions /////
-export function updateActions (device, scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList)
+export function updateActions (device, scene, cameraControlsP, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList)
 {
     // Hide objects
     for (meshName in meshList)
@@ -96,17 +96,17 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
             // Camera
             if (device === 'mobile')
             {
-                cameraControls.maxDistance = 20;
+                cameraControlsP.maxDistance = 20;
                 cameraBounds.radius = 4;
             } else
             {
-                cameraControls.maxDistance = 15;
+                cameraControlsP.maxDistance = 15;
                 cameraBounds.radius = 3.5;
             }
-            cameraControls.minDistance = 6;
+            cameraControlsP.minDistance = 6;
             cameraBounds.center.copy(frameTarget);
-            cameraControls.setLookAt(6.5, 4.66, 0.62, frameTarget.x, frameTarget.y, frameTarget.z, true);
-            cameraControls.fitToSphere(cameraBounds, true);
+            cameraControlsP.setLookAt(6.5, 4.66, 0.62, frameTarget.x, frameTarget.y, frameTarget.z, true);
+            cameraControlsP.fitToSphere(cameraBounds, true);
         } else
         {
             gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
@@ -129,17 +129,17 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
             // Camera
             if (device === 'mobile')
             {
-                cameraControls.maxDistance = 45;
+                cameraControlsP.maxDistance = 45;
                 cameraBounds.radius = 8.5;
             } else
             {
-                cameraControls.maxDistance = 25;
+                cameraControlsP.maxDistance = 25;
                 cameraBounds.radius = 6.7;
             }
-            cameraControls.minDistance = 9.7;
+            cameraControlsP.minDistance = 9.7;
             cameraBounds.center.copy(sceneTarget);
-            cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
-            cameraControls.fitToSphere(cameraBounds, true);
+            cameraControlsP.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
+            cameraControlsP.fitToSphere(cameraBounds, true);
         }
     });
     // Toggle zones visibility

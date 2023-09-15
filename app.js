@@ -16,9 +16,9 @@ import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastS
 import * as gui from './gui.js';
 import * as logic from './logic.js';
 
-let cameraBounds, sceneTarget, frameTarget, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
+let cameraBounds, sceneTarget, frameTarget, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
-let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, clock, canvas, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
+let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, cameraO, clock, canvas, width, height, renderer, composer, renderPass, taaPassP, taaPassO, outputPass, bcPass;
 
 init();
 initCameraControls();
@@ -40,6 +40,9 @@ function init()
     height = window.innerHeight;
     canvas = document.getElementById('webgl');
     cameraP = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1.35, 100);
+    cameraO = new THREE.OrthographicCamera(width / -150, width / 150, height / 150, height / -150, 1, 100);
+    // cameraO.position.z = 1;
+    // cameraO.position.y = 3;
 
     ///// Renderer /////
     renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: false}); //logarithmicDepthBuffer fixes Apple AO flickering bug, but causing performance drop
@@ -57,9 +60,12 @@ function init()
     // Render pass
     // renderPass = new RenderPass(scene, camera);
     // TAA
-    taaPass = new TAARenderPass(scene, cameraP);
-    taaPass.sampleLevel = gui.settings.taaLevel;
-    taaPass.unbiased = true; // false - for better performance
+    taaPassP = new TAARenderPass(scene, cameraP);
+    taaPassP.enabled = true;
+    taaPassO = new TAARenderPass(scene, cameraO);
+    taaPassO.enabled = false;
+    taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel;
+    taaPassP.unbiased = taaPassO.unbiased = true; // false - for better performance
     // Output pass
     outputPass = new OutputPass();
     // BrightnessContrast
@@ -68,7 +74,8 @@ function init()
     bcPass.uniforms["contrast"].value = gui.settings.contrast;
     // Adding passes
     // composer.addPass(renderPass);
-    composer.addPass(taaPass);
+    composer.addPass(taaPassP);
+    composer.addPass(taaPassO);
     composer.addPass(outputPass);
     composer.addPass(bcPass); // BrightnessContrast needs to be the last
 };
@@ -89,36 +96,36 @@ function checkDevice()
     {
         device = 'mobile';
         // Camera init settings
-        cameraControls.maxDistance = 45;
+        cameraControlsP.maxDistance = 45;
         cameraBounds.radius = 8.5;
         gui.cam.radius = 8.5;
         // Quality settings
-        // taaPass.enabled = false;
-        taaPass.sampleLevel = 0;
+        // taaPassP.enabled = false;
+        taaPassP.sampleLevel = 0;
         gui.settings.taaLevel = 0;
         checkOrientation();
     } else
     {
         device = 'desktop'
         // Camera init settings
-        cameraControls.maxDistance = 25;
+        cameraControlsP.maxDistance = 25;
         cameraBounds.radius = 6.7;
         gui.cam.radius = 6.7;
         // Quality settings
         if (gpuTier === 1)
         {
-            // taaPass.enabled = false;
-            taaPass.sampleLevel = 0;
+            // taaPassP.enabled = false;
+            taaPassP.sampleLevel = 0;
             gui.settings.taaLevel = 0;
         } else if (gpuTier === 2)
         {
             if (window.devicePixelRatio === 1)
             {
-                taaPass.sampleLevel = 2;
+                taaPassP.sampleLevel = 2;
                 gui.settings.taaLevel = 2;
             } else
             {
-                taaPass.sampleLevel = 1;
+                taaPassP.sampleLevel = 1;
                 gui.settings.taaLevel = 1;
             }
             // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
@@ -126,11 +133,11 @@ function checkDevice()
         {
             if (window.devicePixelRatio === 1)
             {
-                taaPass.sampleLevel = 3;
+                taaPassP.sampleLevel = 3;
                 gui.settings.taaLevel = 3;
             } else
             {
-                taaPass.sampleLevel = 1;
+                taaPassP.sampleLevel = 1;
                 gui.settings.taaLevel = 1;
             }
             // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
@@ -178,9 +185,9 @@ function loadApp()
         // Start application
         setTimeout(() =>
         {
-            cameraControls.fitToSphere(cameraBounds, true);
-            gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControls, materialName, materialsList);
-            logic.updateActions(device, scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
+            cameraControlsP.fitToSphere(cameraBounds, true);
+            gui.initGUI(renderer, composer, taaPassP, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControlsP, materialName, materialsList);
+            logic.updateActions(device, scene, cameraControlsP, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
             renderScene();
         }, startDelay);
     };
@@ -255,28 +262,29 @@ function loadApp()
 ///// Camera Controls /////
 function initCameraControls()
 {
-    cameraControls = new CameraControls(cameraP, canvas);
+    cameraControlsP = new CameraControls(cameraP, canvas);
+    cameraControlsO = new CameraControls(cameraO, canvas);
     sceneTarget = new THREE.Vector3(0.65, 0.8, -4.65);
     frameTarget = new THREE.Vector3(-0.025, 1, -3.5);
     // Settings
-    cameraControls.mouseButtons.middle = CameraControls.ACTION.TRUCK;
-    cameraControls.minDistance = 9.7;
-    cameraControls.maxPolarAngle = 90 * (Math.PI / 180);
-    cameraControls.azimuthRotateSpeed = 0.55;
-    cameraControls.truckSpeed = 2.35;
-    cameraControls.dollySpeed = 0.75;
-    // cameraControls.smoothTime = 0.3;
+    cameraControlsP.mouseButtons.middle = CameraControls.ACTION.TRUCK;
+    cameraControlsP.minDistance = 9.7;
+    cameraControlsP.maxPolarAngle = 90 * (Math.PI / 180);
+    cameraControlsP.azimuthRotateSpeed = 0.55;
+    cameraControlsP.truckSpeed = 2.35;
+    cameraControlsP.dollySpeed = 0.75;
     // Camera target boundary box
     const boundaryBoxSize = new THREE.Vector3(6, 2, 6);
     const minPoint = new THREE.Vector3().subVectors(sceneTarget, boundaryBoxSize);
     const maxPoint = new THREE.Vector3().addVectors(sceneTarget, boundaryBoxSize);
     const boundaryBox = new THREE.Box3(minPoint, maxPoint);
-    cameraControls.setBoundary(boundaryBox);
+    cameraControlsP.setBoundary(boundaryBox);
     // Init position
     cameraBounds = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
     cameraBounds.center.copy(sceneTarget);
     cameraBounds.radius = gui.cam.radius;
-    cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
+    cameraControlsP.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
+    cameraControlsO.setLookAt(0.56, 20.7, -4.5, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
 };
 
 ///// Window resized /////
@@ -291,7 +299,6 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(gui.settings.pixelRatio);
     composer.setSize(width, height);
     composer.setPixelRatio(gui.settings.pixelRatio);
-    // cameraControls.fitToSphere(cameraBounds, true);
 });
 
 ///// Render /////
@@ -307,9 +314,10 @@ function renderScene()
         mixer.update(delta);
     };
     // Update cameraControls
-    if (cameraControls)
+    if (cameraControlsP)
     {
-        cameraControls.update(delta);
+        cameraControlsP.update(delta);
+        cameraControlsO.update(delta);
     };
     gui.fps.end();
     requestAnimationFrame(renderScene);
