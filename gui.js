@@ -43,7 +43,7 @@ let mats =
 };
 
 ///// Main function /////
-export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList)
+export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControls, materialName, materialsList)
 {
     const pane = new Pane({container: document.getElementById('gui')});
     pane.registerPlugin(EssentialsPlugin);
@@ -75,7 +75,7 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     Settings.addBinding(settings, 'taaLevel', {options: {'0 - (1 Sample)': 0, '1 - (2 Samples)': 1, '2 - (4 Samples)': 2, '3 - (8 Samples)': 3, '4 - (16 Samples)': 4, '5 - (32 Samples)': 5}, label: 'TAA Level'})
     .on('change', (ev) =>
     {
-        taaPass.enabled = true;
+        // taaPass.enabled = true;
         taaPass.sampleLevel = ev.value;
     });
     // Tonemapping
@@ -120,8 +120,8 @@ export function initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds
     Camera.addBinding(cam, 'FOV', {min: 30, max: 80, label: 'FOV'})
     .on('change', (ev) =>
     {
-        camera.fov = ev.value;
-        camera.updateProjectionMatrix();
+        cameraP.fov = ev.value;
+        cameraP.updateProjectionMatrix();
     });
     // Fit sphere radius
     Camera.addBinding(cam, 'radius', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius'})

@@ -207,6 +207,14 @@
     background-image: url('/assets/bookmark-x.svg');
 }
 
+.button-camera {
+    background-image: url('/assets/camera-p.svg');
+}
+
+.button-camera-pressed {
+    background-image: url('/assets/camera-p.svg');
+}
+
 .preloader {
     width: 100%;
     height: 100%;

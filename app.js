@@ -18,7 +18,7 @@ import * as logic from './logic.js';
 
 let cameraBounds, sceneTarget, frameTarget, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControls, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
-let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, camera, clock, canvas, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
+let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, clock, canvas, width, height, renderer, composer, renderPass, taaPass, outputPass, bcPass;
 
 init();
 initCameraControls();
@@ -27,7 +27,6 @@ function init()
     ///// Checking for WebGL 2.0 compatibility /////
     if (WebGL.isWebGL2Available() === false)
     {
-        // document.body.appendChild(WebGL.getWebGL2ErrorMessage());
         const webglBlock = document.getElementById('webgl-block');
         webglBlock.style.display = 'flex';
         return;
@@ -40,7 +39,7 @@ function init()
     width = window.innerWidth;
     height = window.innerHeight;
     canvas = document.getElementById('webgl');
-    camera = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1.5, 100);
+    cameraP = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1.35, 100);
 
     ///// Renderer /////
     renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: false}); //logarithmicDepthBuffer fixes Apple AO flickering bug, but causing performance drop
@@ -56,11 +55,11 @@ function init()
     composer.setSize(width, height);
     composer.setPixelRatio(gui.settings.pixelRatio);
     // Render pass
-    renderPass = new RenderPass(scene, camera);
+    // renderPass = new RenderPass(scene, camera);
     // TAA
-    taaPass = new TAARenderPass(scene, camera);
+    taaPass = new TAARenderPass(scene, cameraP);
     taaPass.sampleLevel = gui.settings.taaLevel;
-    taaPass.unbiased = false; // false - for better performance
+    taaPass.unbiased = true; // false - for better performance
     // Output pass
     outputPass = new OutputPass();
     // BrightnessContrast
@@ -68,10 +67,10 @@ function init()
     bcPass.uniforms["brightness"].value = gui.settings.brightness;
     bcPass.uniforms["contrast"].value = gui.settings.contrast;
     // Adding passes
-    composer.addPass(renderPass);
+    // composer.addPass(renderPass);
     composer.addPass(taaPass);
     composer.addPass(outputPass);
-    composer.addPass(bcPass); // BrightnessContrast needs to be last
+    composer.addPass(bcPass); // BrightnessContrast needs to be the last
 };
 
 ///// Performance benchmark /////
@@ -94,7 +93,8 @@ function checkDevice()
         cameraBounds.radius = 8.5;
         gui.cam.radius = 8.5;
         // Quality settings
-        taaPass.enabled = false;
+        // taaPass.enabled = false;
+        taaPass.sampleLevel = 0;
         gui.settings.taaLevel = 0;
         checkOrientation();
     } else
@@ -107,11 +107,12 @@ function checkDevice()
         // Quality settings
         if (gpuTier === 1)
         {
-            taaPass.enabled = false;
+            // taaPass.enabled = false;
+            taaPass.sampleLevel = 0;
             gui.settings.taaLevel = 0;
         } else if (gpuTier === 2)
         {
-            if (window.devicePixelRatio == 1)
+            if (window.devicePixelRatio === 1)
             {
                 taaPass.sampleLevel = 2;
                 gui.settings.taaLevel = 2;
@@ -120,9 +121,10 @@ function checkDevice()
                 taaPass.sampleLevel = 1;
                 gui.settings.taaLevel = 1;
             }
+            // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
         } else if (gpuTier === 3)
         {
-            if (window.devicePixelRatio == 1)
+            if (window.devicePixelRatio === 1)
             {
                 taaPass.sampleLevel = 3;
                 gui.settings.taaLevel = 3;
@@ -131,6 +133,7 @@ function checkDevice()
                 taaPass.sampleLevel = 1;
                 gui.settings.taaLevel = 1;
             }
+            // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
         };
         logic.toggleDeviceBlock(device, orientation);
         appIsLoaded = true;
@@ -176,7 +179,7 @@ function loadApp()
         setTimeout(() =>
         {
             cameraControls.fitToSphere(cameraBounds, true);
-            gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, camera, cameraControls, materialName, materialsList);
+            gui.initGUI(renderer, composer, taaPass, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControls, materialName, materialsList);
             logic.updateActions(device, scene, cameraControls, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
             renderScene();
         }, startDelay);
@@ -252,12 +255,12 @@ function loadApp()
 ///// Camera Controls /////
 function initCameraControls()
 {
-    cameraControls = new CameraControls(camera, canvas);
+    cameraControls = new CameraControls(cameraP, canvas);
     sceneTarget = new THREE.Vector3(0.65, 0.8, -4.65);
     frameTarget = new THREE.Vector3(-0.025, 1, -3.5);
     // Settings
     cameraControls.mouseButtons.middle = CameraControls.ACTION.TRUCK;
-    cameraControls.minDistance = 9.5;
+    cameraControls.minDistance = 9.7;
     cameraControls.maxPolarAngle = 90 * (Math.PI / 180);
     cameraControls.azimuthRotateSpeed = 0.55;
     cameraControls.truckSpeed = 2.35;
@@ -282,19 +285,19 @@ window.addEventListener('resize', () =>
     checkOrientation();
     width = window.innerWidth;
     height = window.innerHeight;
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    cameraP.aspect = width / height;
+    cameraP.updateProjectionMatrix();
     renderer.setSize(width, height);
     renderer.setPixelRatio(gui.settings.pixelRatio);
     composer.setSize(width, height);
     composer.setPixelRatio(gui.settings.pixelRatio);
-    cameraControls.fitToSphere(cameraBounds, true);
+    // cameraControls.fitToSphere(cameraBounds, true);
 });
 
 ///// Render /////
 function renderScene()
 {
-    logic.raycast(scene, camera);
+    logic.raycast(scene, cameraP);
 
     gui.fps.begin();
     const delta = clock.getDelta();

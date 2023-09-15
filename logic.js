@@ -3,8 +3,8 @@ import {Raycaster, Vector2} from 'three';
 
 let intersects, raycaster = new Raycaster(), pointer = new Vector2();
 let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true;
-let buildingVisible = true, zonesVisible = false;
-let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones');
+let buildingVisible = true, zonesVisible = false, cameraProjection = 'persp';
+let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones'), buttonCamera = document.getElementById('button-camera');
 
 ///// Toggle device block /////
 export function toggleDeviceBlock (device, orientation)
@@ -81,6 +81,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
         {
             gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.add('button-building-pressed');
+            buttonBuilding.title = "Показать здание";
             floorFrame.visible = true;
             building.visible = false;
             building.traverse((object) =>
@@ -110,6 +111,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
         {
             gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.remove('button-building-pressed');
+            buttonBuilding.title = "Скрыть здание";
             building.traverse((object) =>
             {
                 object.layers.set(0);
@@ -134,7 +136,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
                 cameraControls.maxDistance = 25;
                 cameraBounds.radius = 6.7;
             }
-            cameraControls.minDistance = 9.5;
+            cameraControls.minDistance = 9.7;
             cameraBounds.center.copy(sceneTarget);
             cameraControls.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
             cameraControls.fitToSphere(cameraBounds, true);
@@ -148,6 +150,7 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
             gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             gsap.to('#zones', {yPercent: 100, opacity: 1, duration: 0.5, ease: 'power2.out'});
             buttonZones.classList.add('button-zones-pressed');
+            buttonZones.title = "Скрыть зоны";
             if(buildingVisible === true)
             {
                 zonesBuilding.visible = true;
@@ -162,11 +165,30 @@ export function updateActions (device, scene, cameraControls, cameraBounds, scen
             gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             gsap.to('#zones', {yPercent: -100, opacity: 0, duration: 0.5, ease: 'power2.in'});
             buttonZones.classList.remove('button-zones-pressed');
+            buttonZones.title = "Показать зоны";
             zonesBuilding.visible = false;
             zonesFrame.visible = false;
             zonesVisible = false;
         }
     });
+    // Toggle camera projection
+    buttonCamera.addEventListener('click', () =>
+    {
+        if(cameraProjection === 'persp')
+        {
+            gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            buttonCamera.classList.add('button-camera-pressed');
+            buttonCamera.title = "Перспективная проекция";
+            cameraProjection = 'ortho';
+        } else
+        {
+            gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            buttonCamera.classList.remove('button-camera-pressed');
+            buttonCamera.title = "Ортографическая проекция";
+            cameraProjection = 'persp';
+        }
+    });
+
 
     ///// Cursor 'pointer' when howering over collisions /////
     document.addEventListener('mousemove', () =>
@@ -335,8 +357,8 @@ document.addEventListener('mousemove', (event) =>
     pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 });
 
-export function raycast (scene, camera)
+export function raycast (scene, cameraP)
 {
-    raycaster.setFromCamera(pointer, camera);
+    raycaster.setFromCamera(pointer, cameraP);
     intersects = raycaster.intersectObjects(scene.children);
 };
