@@ -3,8 +3,9 @@ import {Raycaster, Vector2} from 'three';
 
 let intersects, raycaster = new Raycaster(), pointer = new Vector2();
 let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true;
-let buildingVisible = true, zonesVisible = false, cameraProjection = 'persp';
+let buildingVisible = true, zonesVisible = false;
 let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones'), buttonCamera = document.getElementById('button-camera');
+export let cameraProjection = 'persp';
 
 ///// Toggle device block /////
 export function toggleDeviceBlock (device, orientation)
@@ -40,7 +41,7 @@ export function updateLoadingBar (progress, startDelay)
 };
 
 ///// Update actions /////
-export function updateActions (device, scene, cameraControlsP, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList)
+export function updateActions (device, scene, cameraControlsP, cameraControlsO, cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, materialsList, meshName, meshList, mixer, animationsList)
 {
     // Hide objects
     for (meshName in meshList)
@@ -84,29 +85,49 @@ export function updateActions (device, scene, cameraControlsP, cameraBounds, sce
             buttonBuilding.title = "Показать здание";
             floorFrame.visible = true;
             building.visible = false;
+            zonesBuilding.visible = false;
             building.traverse((object) =>
             {
                 object.layers.set(1);
             });
-            if(zonesVisible === true)
-            {
-                zonesBuilding.visible = false;
-            };
             buildingVisible = false;
             // Camera
-            if (device === 'mobile')
+            if (cameraProjection === 'persp')
             {
-                cameraControlsP.maxDistance = 20;
-                cameraBounds.radius = 4;
-            } else
+                if (device === 'mobile')
+                {
+                    cameraBoundsP.radius = 4;
+                    cameraControlsP.minDistance = 8;
+                    cameraControlsP.maxDistance = 28;
+                } else
+                {
+                    cameraBoundsP.radius = 3.5;
+                    cameraControlsP.minDistance = 6;
+                    cameraControlsP.maxDistance = 15;
+                }
+                cameraControlsP.setBoundary(frameBBox);
+                cameraBoundsP.center.copy(frameTargetP);
+                cameraControlsP.setLookAt(6.5, 2.5, 0.62, frameTargetP.x, frameTargetP.y, frameTargetP.z, true);
+                cameraControlsP.fitToSphere(cameraBoundsP, true);
+            } else if (cameraProjection === 'ortho')
             {
-                cameraControlsP.maxDistance = 15;
-                cameraBounds.radius = 3.5;
-            }
-            cameraControlsP.minDistance = 6;
-            cameraBounds.center.copy(frameTarget);
-            cameraControlsP.setLookAt(6.5, 4.66, 0.62, frameTarget.x, frameTarget.y, frameTarget.z, true);
-            cameraControlsP.fitToSphere(cameraBounds, true);
+                if (device === 'mobile')
+                {
+                    cameraBoundsO.radius = 4;
+                    cameraControlsO.minZoom = 40;
+                    cameraControlsO.maxZoom = 160;
+                } else
+                {
+                    cameraBoundsO.radius = 3;
+                    cameraControlsO.minZoom = 80;
+                    cameraControlsO.maxZoom = 180;
+                }
+                cameraControlsO.setBoundary(frameBBox);
+                cameraBoundsO.center.copy(frameTargetO);
+                cameraControlsO.setLookAt(-0.025, 8, -3.5, frameTargetO.x, frameTargetO.y, frameTargetO.z, true);
+                cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
+                cameraControlsO.fitToSphere(cameraBoundsO, true);
+            };
         } else
         {
             gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
@@ -129,17 +150,19 @@ export function updateActions (device, scene, cameraControlsP, cameraBounds, sce
             // Camera
             if (device === 'mobile')
             {
-                cameraControlsP.maxDistance = 45;
-                cameraBounds.radius = 8.5;
+                cameraBoundsP.radius = 8.5;
+                cameraControlsP.minDistance = 12;
+                cameraControlsP.maxDistance = 50;
             } else
             {
+                cameraBoundsP.radius = 6.7;
+                cameraControlsP.minDistance = 9.7;
                 cameraControlsP.maxDistance = 25;
-                cameraBounds.radius = 6.7;
             }
-            cameraControlsP.minDistance = 9.7;
-            cameraBounds.center.copy(sceneTarget);
-            cameraControlsP.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
-            cameraControlsP.fitToSphere(cameraBounds, true);
+            cameraControlsP.setBoundary(sceneBBox);
+            cameraBoundsP.center.copy(sceneTargetP);
+            cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
+            cameraControlsP.fitToSphere(cameraBoundsP, true);
         }
     });
     // Toggle zones visibility
@@ -180,12 +203,15 @@ export function updateActions (device, scene, cameraControlsP, cameraBounds, sce
             buttonCamera.classList.add('button-camera-pressed');
             buttonCamera.title = "Перспективная проекция";
             cameraProjection = 'ortho';
+            cameraControlsO.fitToSphere(cameraBoundsO, true);
         } else
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonCamera.classList.remove('button-camera-pressed');
             buttonCamera.title = "Ортографическая проекция";
             cameraProjection = 'persp';
+            cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
+            cameraControlsP.fitToSphere(cameraBoundsP, true);
         }
     });
 

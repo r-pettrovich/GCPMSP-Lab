@@ -8,7 +8,6 @@ import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import CameraControls from 'camera-controls';
 CameraControls.install({THREE: THREE});
 import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
-import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {TAARenderPass} from 'three/addons/postprocessing/TAARenderPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
@@ -16,9 +15,9 @@ import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastS
 import * as gui from './gui.js';
 import * as logic from './logic.js';
 
-let cameraBounds, sceneTarget, frameTarget, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
+let cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
-let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, cameraO, clock, canvas, width, height, renderer, composer, renderPass, taaPassP, taaPassO, outputPass, bcPass;
+let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, cameraO, cameraOValue = 2, clock, canvas, width, height, renderer, composer, taaPassP, taaPassO, outputPass, bcPass;
 
 init();
 initCameraControls();
@@ -36,13 +35,11 @@ function init()
     clock = new THREE.Clock();
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x7c939c);
+    canvas = document.getElementById('webgl');
     width = window.innerWidth;
     height = window.innerHeight;
-    canvas = document.getElementById('webgl');
     cameraP = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1.35, 100);
-    cameraO = new THREE.OrthographicCamera(width / -150, width / 150, height / 150, height / -150, 1, 100);
-    // cameraO.position.z = 1;
-    // cameraO.position.y = 3;
+    cameraO = new THREE.OrthographicCamera(width / -cameraOValue, width / cameraOValue, height / cameraOValue, height / -cameraOValue, 1, 100);
 
     ///// Renderer /////
     renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: false}); //logarithmicDepthBuffer fixes Apple AO flickering bug, but causing performance drop
@@ -57,9 +54,7 @@ function init()
     composer = new EffectComposer(renderer);
     composer.setSize(width, height);
     composer.setPixelRatio(gui.settings.pixelRatio);
-    // Render pass
-    // renderPass = new RenderPass(scene, camera);
-    // TAA
+    // TAA render pass
     taaPassP = new TAARenderPass(scene, cameraP);
     taaPassP.enabled = true;
     taaPassO = new TAARenderPass(scene, cameraO);
@@ -72,8 +67,8 @@ function init()
     bcPass = new ShaderPass(BrightnessContrastShader);
     bcPass.uniforms["brightness"].value = gui.settings.brightness;
     bcPass.uniforms["contrast"].value = gui.settings.contrast;
-    // Adding passes
-    // composer.addPass(renderPass);
+
+    ///// Adding passes /////
     composer.addPass(taaPassP);
     composer.addPass(taaPassO);
     composer.addPass(outputPass);
@@ -96,49 +91,48 @@ function checkDevice()
     {
         device = 'mobile';
         // Camera init settings
-        cameraControlsP.maxDistance = 45;
-        cameraBounds.radius = 8.5;
-        gui.cam.radius = 8.5;
+        cameraBoundsP.radius = 8.5;
+        cameraControlsP.minDistance = 12;
+        cameraControlsP.maxDistance = 50;
+        cameraBoundsO.radius = 5.5;
+        cameraControlsO.minZoom = 30;
+        cameraControlsO.maxZoom = 120;
         // Quality settings
-        // taaPassP.enabled = false;
-        taaPassP.sampleLevel = 0;
-        gui.settings.taaLevel = 0;
+        taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 0;
         checkOrientation();
     } else
     {
         device = 'desktop'
         // Camera init settings
+        cameraBoundsP.radius = gui.cam.radiusP;
+        cameraControlsP.minDistance = 9.7;
         cameraControlsP.maxDistance = 25;
-        cameraBounds.radius = 6.7;
-        gui.cam.radius = 6.7;
+        cameraBoundsO.radius = gui.cam.radiusO;
+        cameraControlsO.minZoom = 35;
+        cameraControlsO.maxZoom = 180;
         // Quality settings
         if (gpuTier === 1)
         {
             // taaPassP.enabled = false;
-            taaPassP.sampleLevel = 0;
-            gui.settings.taaLevel = 0;
+            taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 0;
         } else if (gpuTier === 2)
         {
             if (window.devicePixelRatio === 1)
             {
-                taaPassP.sampleLevel = 2;
-                gui.settings.taaLevel = 2;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 2;
             } else
             {
-                taaPassP.sampleLevel = 1;
-                gui.settings.taaLevel = 1;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 1;
             }
             // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
         } else if (gpuTier === 3)
         {
             if (window.devicePixelRatio === 1)
             {
-                taaPassP.sampleLevel = 3;
-                gui.settings.taaLevel = 3;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel;
             } else
             {
-                taaPassP.sampleLevel = 1;
-                gui.settings.taaLevel = 1;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 1;
             }
             // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
         };
@@ -185,9 +179,10 @@ function loadApp()
         // Start application
         setTimeout(() =>
         {
-            cameraControlsP.fitToSphere(cameraBounds, true);
-            gui.initGUI(renderer, composer, taaPassP, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControlsP, materialName, materialsList);
-            logic.updateActions(device, scene, cameraControlsP, cameraBounds, sceneTarget, frameTarget, materialsList, meshName, meshList, mixer, animationsList);
+            cameraControlsP.fitToSphere(cameraBoundsP, true);
+            cameraControlsO.fitToSphere(cameraBoundsO, false);
+            gui.initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, materialName, materialsList);
+            logic.updateActions(device, scene, cameraControlsP, cameraControlsO, cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, materialsList, meshName, meshList, mixer, animationsList);
             renderScene();
         }, startDelay);
     };
@@ -263,28 +258,53 @@ function loadApp()
 function initCameraControls()
 {
     cameraControlsP = new CameraControls(cameraP, canvas);
+    sceneTargetP = new THREE.Vector3(0.65, 1.58, -4.65);
+    frameTargetP = new THREE.Vector3(-0.025, 1.58, -3.5);
     cameraControlsO = new CameraControls(cameraO, canvas);
-    sceneTarget = new THREE.Vector3(0.65, 0.8, -4.65);
-    frameTarget = new THREE.Vector3(-0.025, 1, -3.5);
-    // Settings
+    sceneTargetO = new THREE.Vector3(0, 0, -4.65);
+    frameTargetO = new THREE.Vector3(-0.025, 0, -3.5);
+    // Perspective camera settings
     cameraControlsP.mouseButtons.middle = CameraControls.ACTION.TRUCK;
-    cameraControlsP.minDistance = 9.7;
     cameraControlsP.maxPolarAngle = 90 * (Math.PI / 180);
     cameraControlsP.azimuthRotateSpeed = 0.55;
-    cameraControlsP.truckSpeed = 2.35;
+    cameraControlsP.truckSpeed = 1.75;
     cameraControlsP.dollySpeed = 0.75;
+    // Orthographic camera settings
+    cameraControlsO.mouseButtons.left = CameraControls.ACTION.TRUCK;
+    cameraControlsO.mouseButtons.middle = CameraControls.ACTION.TRUCK;
+    cameraControlsO.touches.one = CameraControls.ACTION.TOUCH_TRUCK;
+    cameraControlsO.dollySpeed = 2.5;
     // Camera target boundary box
-    const boundaryBoxSize = new THREE.Vector3(6, 2, 6);
-    const minPoint = new THREE.Vector3().subVectors(sceneTarget, boundaryBoxSize);
-    const maxPoint = new THREE.Vector3().addVectors(sceneTarget, boundaryBoxSize);
+    /* const boundaryBoxSize = new THREE.Vector3(6, 2, 6);
+    const minPoint = new THREE.Vector3().subVectors(sceneTargetP, boundaryBoxSize);
+    const maxPoint = new THREE.Vector3().addVectors(sceneTargetP, boundaryBoxSize);
     const boundaryBox = new THREE.Box3(minPoint, maxPoint);
     cameraControlsP.setBoundary(boundaryBox);
+    cameraControlsO.setBoundary(boundaryBox); */
+
+    ///// Testing boundary boxes /////
+    const sceneBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(12, 5, 12), new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true}));
+    sceneBBoxMesh.position.copy(sceneTargetP);
+    const frameBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 9), new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true}));
+    frameBBoxMesh.position.copy(frameTargetP);
+    scene.add(sceneBBoxMesh);
+    scene.add(frameBBoxMesh);
+    sceneBBoxMesh.visible = true;
+    frameBBoxMesh.visible = true;
+    // sceneBBoxPMesh.layers.set(1);
+    // frameBBoxPMesh.layers.set(1);
+    sceneBBox = new THREE.Box3().setFromObject(sceneBBoxMesh);
+    frameBBox = new THREE.Box3().setFromObject(frameBBoxMesh);
+    cameraControlsP.setBoundary(sceneBBox);
+    cameraControlsO.setBoundary(sceneBBox);
     // Init position
-    cameraBounds = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
-    cameraBounds.center.copy(sceneTarget);
-    cameraBounds.radius = gui.cam.radius;
-    cameraControlsP.setLookAt(-3.56, 12.7, 7.47, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
-    cameraControlsO.setLookAt(0.56, 20.7, -4.5, sceneTarget.x, sceneTarget.y, sceneTarget.z, true);
+    cameraBoundsP = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
+    cameraBoundsP.center.copy(sceneTargetP);
+    cameraBoundsO = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
+    cameraBoundsO.center.copy(sceneTargetO);
+    cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
+    cameraControlsO.setLookAt(0, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
+    cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
 };
 
 ///// Window resized /////
@@ -295,10 +315,17 @@ window.addEventListener('resize', () =>
     height = window.innerHeight;
     cameraP.aspect = width / height;
     cameraP.updateProjectionMatrix();
+    cameraO.left = width / -cameraOValue;
+	cameraO.right = width / cameraOValue;
+	cameraO.top = height / cameraOValue;
+	cameraO.bottom = height / -cameraOValue;
+    cameraO.updateProjectionMatrix();
     renderer.setSize(width, height);
     renderer.setPixelRatio(gui.settings.pixelRatio);
     composer.setSize(width, height);
     composer.setPixelRatio(gui.settings.pixelRatio);
+    cameraControlsP.fitToSphere(cameraBoundsP, true);
+    cameraControlsO.fitToSphere(cameraBoundsO, true);
 });
 
 ///// Render /////
@@ -314,11 +341,12 @@ function renderScene()
         mixer.update(delta);
     };
     // Update cameraControls
-    if (cameraControlsP)
-    {
-        cameraControlsP.update(delta);
-        cameraControlsO.update(delta);
-    };
+    cameraControlsP.update(delta);
+    cameraControlsO.update(delta);
+    // Toggle camera projection
+    taaPassP.enabled = (logic.cameraProjection === 'persp');
+    taaPassO.enabled = (logic.cameraProjection === 'ortho');
+
     gui.fps.end();
     requestAnimationFrame(renderScene);
     composer.render();

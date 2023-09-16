@@ -7,7 +7,7 @@ export let fps;
 export let settings =
 {
     pixelRatio: Math.min(window.devicePixelRatio, 3),
-    taaLevel: 1,
+    taaLevel: 3,
     tonemapping: 4, // LinearToneMapping = 1 ReinhardToneMapping = 2 CineonToneMapping = 3 ACESFilmicToneMapping = 4
     exposure: 1.05,
     brightness: 0.00,
@@ -18,7 +18,8 @@ export let settings =
 export let cam = 
 {
     FOV: 45,
-    radius: 6.7,
+    radiusP: 6.7,
+    radiusO: 8,
 };
 // Materails
 let mats = 
@@ -43,7 +44,7 @@ let mats =
 };
 
 ///// Main function /////
-export function initGUI(renderer, composer, taaPassP, bcPass, scene, cameraBounds, axisHelper, cameraP, cameraControlsP, materialName, materialsList)
+export function initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, materialName, materialsList)
 {
     const pane = new Pane({container: document.getElementById('gui')});
     pane.registerPlugin(EssentialsPlugin);
@@ -77,6 +78,7 @@ export function initGUI(renderer, composer, taaPassP, bcPass, scene, cameraBound
     {
         // taaPass.enabled = true;
         taaPassP.sampleLevel = ev.value;
+        taaPassO.sampleLevel = ev.value;
     });
     // Tonemapping
     Settings.addBinding(settings, 'tonemapping', {options: {'LinearToneMapping': 1, 'ReinhardToneMapping': 2, 'CineonToneMapping': 3, 'ACESFilmicToneMapping': 4}, label: 'ToneMapping'})
@@ -123,12 +125,19 @@ export function initGUI(renderer, composer, taaPassP, bcPass, scene, cameraBound
         cameraP.fov = ev.value;
         cameraP.updateProjectionMatrix();
     });
-    // Fit sphere radius
-    Camera.addBinding(cam, 'radius', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius'})
+    // Fit sphere radius perspective
+    Camera.addBinding(cam, 'radiusP', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius P'})
     .on('change', (ev) =>
     {
-        cameraBounds.radius = ev.value;
-        cameraControlsP.fitToSphere(cameraBounds, false);
+        cameraBoundsP.radius = ev.value;
+        cameraControlsP.fitToSphere(cameraBoundsP, false);
+    });
+    // Fit sphere radius orthographic
+    Camera.addBinding(cam, 'radiusO', {min: 1, max: 10, step: 0.1, label: 'Fit Sphere Radius O'})
+    .on('change', (ev) =>
+    {
+        cameraBoundsO.radius = ev.value;
+        cameraControlsO.fitToSphere(cameraBoundsO, false);
     });
     // Get camera position button
     Camera.addButton({title: 'Get Camera Position'})
