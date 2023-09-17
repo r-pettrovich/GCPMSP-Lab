@@ -78,7 +78,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
     // Toggle building visibility
     buttonBuilding.addEventListener('click', () =>
     {
-        if(buildingVisible === true)
+        if (buildingVisible === true)
         {
             gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.add('button-building-pressed');
@@ -91,7 +91,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 object.layers.set(1);
             });
             buildingVisible = false;
-            // Camera
+            // Camera behavior
             if (cameraProjection === 'persp')
             {
                 if (device === 'mobile')
@@ -120,7 +120,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 {
                     cameraBoundsO.radius = 3;
                     cameraControlsO.minZoom = 80;
-                    cameraControlsO.maxZoom = 180;
+                    cameraControlsO.maxZoom = 320;
                 }
                 cameraControlsO.setBoundary(frameBBox);
                 cameraBoundsO.center.copy(frameTargetO);
@@ -141,47 +141,68 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             {
                 floorFrame.visible = false;
                 building.visible = true;
-                if(zonesVisible === true)
+                if (zonesVisible === true)
                 {
                     zonesBuilding.visible = true;
                 };
                 buildingVisible = true;
             }, 250);
-            // Camera
-            if (device === 'mobile')
+            // Camera behavior
+            if (cameraProjection === 'persp')
             {
-                cameraBoundsP.radius = 8.5;
-                cameraControlsP.minDistance = 12;
-                cameraControlsP.maxDistance = 50;
-            } else
+                if (device === 'mobile')
+                {
+                    cameraBoundsP.radius = 8.5;
+                    cameraControlsP.minDistance = 12;
+                    cameraControlsP.maxDistance = 50;
+                } else
+                {
+                    cameraBoundsP.radius = 6.7;
+                    cameraControlsP.minDistance = 9.7;
+                    cameraControlsP.maxDistance = 25;
+                }
+                cameraControlsP.setBoundary(sceneBBox);
+                cameraBoundsP.center.copy(sceneTargetP);
+                cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
+                cameraControlsP.fitToSphere(cameraBoundsP, true);
+            } else if (cameraProjection === 'ortho')
             {
-                cameraBoundsP.radius = 6.7;
-                cameraControlsP.minDistance = 9.7;
-                cameraControlsP.maxDistance = 25;
-            }
-            cameraControlsP.setBoundary(sceneBBox);
-            cameraBoundsP.center.copy(sceneTargetP);
-            cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
-            cameraControlsP.fitToSphere(cameraBoundsP, true);
-        }
+                if (device === 'mobile')
+                {
+                    cameraBoundsO.radius = 5,5;
+                    cameraControlsO.minZoom = 30;
+                    cameraControlsO.maxZoom = 120;
+                } else
+                {
+                    cameraBoundsO.radius = 8;
+                    cameraControlsO.minZoom = 35;
+                    cameraControlsO.maxZoom = 180;
+                }
+                cameraControlsO.setBoundary(sceneBBox);
+                cameraBoundsO.center.copy(sceneTargetO);
+                cameraControlsO.setLookAt(0, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
+                cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
+                cameraControlsO.fitToSphere(cameraBoundsO, true);
+            };
+        };
     });
     // Toggle zones visibility
     buttonZones.addEventListener('click', () =>
     {
-        if(zonesVisible === false)
+        if (zonesVisible === false)
         {
             gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             gsap.to('#zones', {yPercent: 100, opacity: 1, duration: 0.5, ease: 'power2.out'});
             buttonZones.classList.add('button-zones-pressed');
             buttonZones.title = "Скрыть зоны";
-            if(buildingVisible === true)
+            if (buildingVisible === true)
             {
                 zonesBuilding.visible = true;
                 zonesFrame.visible = true;
             } else
             {
                 zonesFrame.visible = true;
-            }
+            };
             zonesVisible = true;
         } else
         {
@@ -192,27 +213,98 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             zonesBuilding.visible = false;
             zonesFrame.visible = false;
             zonesVisible = false;
-        }
+        };
     });
     // Toggle camera projection
     buttonCamera.addEventListener('click', () =>
     {
-        if(cameraProjection === 'persp')
+        if (cameraProjection === 'persp')
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonCamera.classList.add('button-camera-pressed');
             buttonCamera.title = "Перспективная проекция";
             cameraProjection = 'ortho';
-            cameraControlsO.fitToSphere(cameraBoundsO, true);
+            // Camera behavior
+            if (buildingVisible === true)
+            {
+                if (device === 'mobile')
+                {
+                    cameraBoundsO.radius = 5,5;
+                    cameraControlsO.minZoom = 30;
+                    cameraControlsO.maxZoom = 120;
+                } else
+                {
+                    cameraBoundsO.radius = 8;
+                    cameraControlsO.minZoom = 35;
+                    cameraControlsO.maxZoom = 180;
+                };
+                cameraControlsO.setBoundary(sceneBBox);
+                cameraBoundsO.center.copy(sceneTargetO);
+                cameraControlsO.setLookAt(0, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
+                cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
+                cameraControlsO.fitToSphere(cameraBoundsO, true);
+            } else
+            {
+                if (device === 'mobile')
+                {
+                    cameraBoundsO.radius = 4;
+                    cameraControlsO.minZoom = 40;
+                    cameraControlsO.maxZoom = 160;
+                } else
+                {
+                    cameraBoundsO.radius = 3;
+                    cameraControlsO.minZoom = 80;
+                    cameraControlsO.maxZoom = 320;
+                };
+                cameraControlsO.setBoundary(frameBBox);
+                cameraBoundsO.center.copy(frameTargetO);
+                cameraControlsO.setLookAt(-0.025, 8, -3.5, frameTargetO.x, frameTargetO.y, frameTargetO.z, true);
+                cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
+                cameraControlsO.fitToSphere(cameraBoundsO, true);
+            };
         } else
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonCamera.classList.remove('button-camera-pressed');
             buttonCamera.title = "Ортографическая проекция";
             cameraProjection = 'persp';
-            cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
-            cameraControlsP.fitToSphere(cameraBoundsP, true);
-        }
+            // Camera behavior
+            if (buildingVisible === true)
+            {
+                if (device === 'mobile')
+                {
+                    cameraBoundsP.radius = 8.5;
+                    cameraControlsP.minDistance = 12;
+                    cameraControlsP.maxDistance = 50;
+                } else
+                {
+                    cameraBoundsP.radius = 6.7;
+                    cameraControlsP.minDistance = 9.7;
+                    cameraControlsP.maxDistance = 25;
+                };
+                cameraControlsP.setBoundary(sceneBBox);
+                cameraBoundsP.center.copy(sceneTargetP);
+                cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
+                cameraControlsP.fitToSphere(cameraBoundsP, true);
+            } else
+            {
+                if (device === 'mobile')
+                {
+                    cameraBoundsP.radius = 4;
+                    cameraControlsP.minDistance = 8;
+                    cameraControlsP.maxDistance = 28;
+                } else
+                {
+                    cameraBoundsP.radius = 3.5;
+                    cameraControlsP.minDistance = 6;
+                    cameraControlsP.maxDistance = 15;
+                }
+                cameraControlsP.setBoundary(frameBBox);
+                cameraBoundsP.center.copy(frameTargetP);
+                cameraControlsP.setLookAt(6.5, 2.5, 0.62, frameTargetP.x, frameTargetP.y, frameTargetP.z, true);
+                cameraControlsP.fitToSphere(cameraBoundsP, true);
+            };
+        };
     });
 
 

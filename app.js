@@ -104,10 +104,10 @@ function checkDevice()
     {
         device = 'desktop'
         // Camera init settings
-        cameraBoundsP.radius = gui.cam.radiusP;
+        cameraBoundsP.radius = 6.7;
         cameraControlsP.minDistance = 9.7;
         cameraControlsP.maxDistance = 25;
-        cameraBoundsO.radius = gui.cam.radiusO;
+        cameraBoundsO.radius = 8;
         cameraControlsO.minZoom = 35;
         cameraControlsO.maxZoom = 180;
         // Quality settings
@@ -273,26 +273,18 @@ function initCameraControls()
     cameraControlsO.mouseButtons.left = CameraControls.ACTION.TRUCK;
     cameraControlsO.mouseButtons.middle = CameraControls.ACTION.TRUCK;
     cameraControlsO.touches.one = CameraControls.ACTION.TOUCH_TRUCK;
-    cameraControlsO.dollySpeed = 2.5;
+    cameraControlsO.dollySpeed = 1.5;
     // Camera target boundary box
-    /* const boundaryBoxSize = new THREE.Vector3(6, 2, 6);
-    const minPoint = new THREE.Vector3().subVectors(sceneTargetP, boundaryBoxSize);
-    const maxPoint = new THREE.Vector3().addVectors(sceneTargetP, boundaryBoxSize);
-    const boundaryBox = new THREE.Box3(minPoint, maxPoint);
-    cameraControlsP.setBoundary(boundaryBox);
-    cameraControlsO.setBoundary(boundaryBox); */
-
-    ///// Testing boundary boxes /////
-    const sceneBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(12, 5, 12), new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true}));
+    const sceneBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(12, 4.5, 12), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
+    const frameBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 4.5, 9), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
     sceneBBoxMesh.position.copy(sceneTargetP);
-    const frameBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 9), new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true}));
     frameBBoxMesh.position.copy(frameTargetP);
     scene.add(sceneBBoxMesh);
     scene.add(frameBBoxMesh);
-    sceneBBoxMesh.visible = true;
-    frameBBoxMesh.visible = true;
-    // sceneBBoxPMesh.layers.set(1);
-    // frameBBoxPMesh.layers.set(1);
+    sceneBBoxMesh.visible = false;
+    frameBBoxMesh.visible = false;
+    sceneBBoxMesh.layers.set(1);
+    frameBBoxMesh.layers.set(1);
     sceneBBox = new THREE.Box3().setFromObject(sceneBBoxMesh);
     frameBBox = new THREE.Box3().setFromObject(frameBBoxMesh);
     cameraControlsP.setBoundary(sceneBBox);

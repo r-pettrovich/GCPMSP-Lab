@@ -156,7 +156,7 @@
     width: var(--zones-color-square-size);
     height: var(--zones-color-square-size);
     position: relative;
-    background-color: rgb(80, 116, 231);
+    background-color: rgb(107, 134, 219);
     border-radius: 5px;
     box-shadow: var(--menu-button-shadow);
 }
@@ -208,7 +208,7 @@
 }
 
 .button-camera {
-    background-image: url('/assets/camera-p.svg');
+    background-image: url('/assets/camera-o.svg');
 }
 
 .button-camera-pressed {

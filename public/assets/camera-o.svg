@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10">
   <path d="m0,2C0,.9.9,0,2,0h7.5c1,0,1.85.74,1.98,1.74l3.11-1.38c.5-.22,1.1,0,1.32.51.06.13.09.27.09.41v7.46c0,.55-.45,1-1,1-.14,0-.28-.03-.41-.09l-3.11-1.38c-.13.99-.98,1.74-1.98,1.74H2c-1.1,0-2-.9-2-2V2Zm11.5,5.18l3.5,1.56V1.27l-3.5,1.56v4.35ZM2,1c-.55,0-1,.45-1,1v6c0,.55.45,1,1,1h7.5c.55,0,1-.45,1-1V2c0-.55-.45-1-1-1H2Z" style="fill: #3b4042; fill-rule: evenodd;"/>
-  <text transform="translate(3.26 7.75)" style="fill: #3b4042; font-family: Bahnschrift, Bahnschrift; font-size: 8px; font-variation-settings: &apos;wght&apos; 400, &apos;wdth&apos; 100;"><tspan x="0" y="0">P</tspan></text>
+  <text transform="translate(3.17 7.76)" style="fill: #3b4042; font-family: Bahnschrift, Bahnschrift; font-size: 8px; font-variation-settings: &apos;wght&apos; 400, &apos;wdth&apos; 100;"><tspan x="0" y="0">O</tspan></text>
 </svg>
