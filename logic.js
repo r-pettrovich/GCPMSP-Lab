@@ -1,10 +1,10 @@
 import {gsap} from 'gsap';
-import {Raycaster, Vector2} from 'three';
+import {Raycaster, Vector2, Vector3} from 'three';
 
-let intersects, raycaster = new Raycaster(), pointer = new Vector2();
-let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true;
-let buildingVisible = true, zonesVisible = false;
+let intersects, raycaster = new Raycaster(), pointer = new Vector2(), screenLockA = new Vector2(), pointLockA = new Vector3(), locatorLockA;
+let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true, buildingVisible = true, zonesVisible = false;
 let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones'), buttonCamera = document.getElementById('button-camera');
+let lockA = document.getElementById('lock_a');
 export let cameraProjection = 'persp';
 
 ///// Toggle device block /////
@@ -37,6 +37,7 @@ export function updateLoadingBar (progress, startDelay)
         gsap.set('#top', {display: 'flex'});
         gsap.set('#menu', {display: 'flex'});
         gsap.set('#zones', {display: 'flex'});
+        gsap.set('#lock_a', {display: 'block'});
     }
 };
 
@@ -51,12 +52,14 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             meshList[meshName].visible = false;
         }
     };
-    //Prepare objects variables
+    // Prepare objects variables
     const building = scene.getObjectByName('Static_Building');
-    const floorBuilding = scene.getObjectByName('Static_Floor_Building');
     const floorFrame = scene.getObjectByName('Static_Floor_Frame');
     const zonesBuilding = scene.getObjectByName('Zones_Building');
     const zonesFrame = scene.getObjectByName('Zones_Frame');
+    // Prepare locks position variables
+    locatorLockA = scene.getObjectByName('Locator_Lock_a');
+
     // Prepare materials variables
     const keypadAMat = materialsList['M_KeyPad_a'];
     const keypadBMat = materialsList['M_KeyPad_b'];
@@ -169,7 +172,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             {
                 if (device === 'mobile')
                 {
-                    cameraBoundsO.radius = 5,5;
+                    cameraBoundsO.radius = 5.3;
                     cameraControlsO.minZoom = 30;
                     cameraControlsO.maxZoom = 120;
                 } else
@@ -180,7 +183,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 }
                 cameraControlsO.setBoundary(sceneBBox);
                 cameraBoundsO.center.copy(sceneTargetO);
-                cameraControlsO.setLookAt(0, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
+                cameraControlsO.setLookAt(0.7, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
                 cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
                 cameraControlsO.fitToSphere(cameraBoundsO, true);
             };
@@ -221,6 +224,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         if (cameraProjection === 'persp')
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.set('#lock_a', {display: 'none'});
             buttonCamera.classList.add('button-camera-pressed');
             buttonCamera.title = "Перспективная проекция";
             cameraProjection = 'ortho';
@@ -229,7 +233,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             {
                 if (device === 'mobile')
                 {
-                    cameraBoundsO.radius = 5,5;
+                    cameraBoundsO.radius = 5.3;
                     cameraControlsO.minZoom = 30;
                     cameraControlsO.maxZoom = 120;
                 } else
@@ -240,7 +244,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 };
                 cameraControlsO.setBoundary(sceneBBox);
                 cameraBoundsO.center.copy(sceneTargetO);
-                cameraControlsO.setLookAt(0, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
+                cameraControlsO.setLookAt(0.7, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
                 cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
                 cameraControlsO.fitToSphere(cameraBoundsO, true);
             } else
@@ -265,6 +269,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         } else
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.set('#lock_a', {display: 'block'});
             buttonCamera.classList.remove('button-camera-pressed');
             buttonCamera.title = "Ортографическая проекция";
             cameraProjection = 'persp';
@@ -309,7 +314,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
 
 
     ///// Cursor 'pointer' when howering over collisions /////
-    document.addEventListener('mousemove', () =>
+    /* document.addEventListener('mousemove', () =>
     {
         if (intersects.length > 0)
         {
@@ -322,10 +327,10 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 document.body.style.cursor = 'default';
             }
         };
-    });
+    }); */
 
     ///// Handle interactive objects /////
-    document.addEventListener('click', () =>
+    /* document.addEventListener('click', () =>
     {
         if (intersects.length > 0)
         {
@@ -465,18 +470,28 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 }
             };
         };
-    });
+    }); */
+};
+
+///// Update loks position /////
+export function updateLocksPosition(cameraP)
+{
+    pointLockA.copy(locatorLockA.position);
+    pointLockA.project(cameraP);
+    screenLockA.x = (pointLockA.x + 1) * window.innerWidth / 2;
+    screenLockA.y = (-pointLockA.y + 1) * window.innerHeight / 2;
+    gsap.set('#lock_a', {x: screenLockA.x, y: screenLockA.y});
 };
 
 ///// Raycaster /////
-document.addEventListener('mousemove', (event) =>
+/* document.addEventListener('mousemove', (event) =>
 {
     pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 });
 
-export function raycast (scene, cameraP)
+export function raycast(scene, cameraP)
 {
     raycaster.setFromCamera(pointer, cameraP);
     intersects = raycaster.intersectObjects(scene.children);
-};
+}; */

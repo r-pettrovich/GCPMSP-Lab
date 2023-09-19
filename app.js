@@ -94,9 +94,10 @@ function checkDevice()
         cameraBoundsP.radius = 8.5;
         cameraControlsP.minDistance = 12;
         cameraControlsP.maxDistance = 50;
-        cameraBoundsO.radius = 5.5;
+        cameraBoundsO.radius = 5.3;
         cameraControlsO.minZoom = 30;
         cameraControlsO.maxZoom = 120;
+        cameraControlsO.dollySpeed = 8;
         // Quality settings
         taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 0;
         checkOrientation();
@@ -110,6 +111,7 @@ function checkDevice()
         cameraBoundsO.radius = 8;
         cameraControlsO.minZoom = 35;
         cameraControlsO.maxZoom = 180;
+        cameraControlsO.dollySpeed = 2;
         // Quality settings
         if (gpuTier === 1)
         {
@@ -261,10 +263,11 @@ function initCameraControls()
     sceneTargetP = new THREE.Vector3(0.65, 1.58, -4.65);
     frameTargetP = new THREE.Vector3(-0.025, 1.58, -3.5);
     cameraControlsO = new CameraControls(cameraO, canvas);
-    sceneTargetO = new THREE.Vector3(0, 0, -4.65);
+    sceneTargetO = new THREE.Vector3(0.7, 0, -4.65);
     frameTargetO = new THREE.Vector3(-0.025, 0, -3.5);
     // Perspective camera settings
     cameraControlsP.mouseButtons.middle = CameraControls.ACTION.TRUCK;
+    cameraControlsP.touches.three = CameraControls.ACTION.NONE;
     cameraControlsP.maxPolarAngle = 90 * (Math.PI / 180);
     cameraControlsP.azimuthRotateSpeed = 0.55;
     cameraControlsP.truckSpeed = 1.75;
@@ -273,7 +276,9 @@ function initCameraControls()
     cameraControlsO.mouseButtons.left = CameraControls.ACTION.TRUCK;
     cameraControlsO.mouseButtons.middle = CameraControls.ACTION.TRUCK;
     cameraControlsO.touches.one = CameraControls.ACTION.TOUCH_TRUCK;
-    cameraControlsO.dollySpeed = 1.5;
+    cameraControlsO.touches.two = CameraControls.ACTION.TOUCH_ZOOM;
+    cameraControlsO.touches.three = CameraControls.ACTION.NONE;
+    cameraControlsO.truckSpeed = 2;
     // Camera target boundary box
     const sceneBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(12, 4.5, 12), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
     const frameBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 4.5, 9), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
@@ -283,8 +288,8 @@ function initCameraControls()
     scene.add(frameBBoxMesh);
     sceneBBoxMesh.visible = false;
     frameBBoxMesh.visible = false;
-    sceneBBoxMesh.layers.set(1);
-    frameBBoxMesh.layers.set(1);
+    // sceneBBoxMesh.layers.set(1);
+    // frameBBoxMesh.layers.set(1);
     sceneBBox = new THREE.Box3().setFromObject(sceneBBoxMesh);
     frameBBox = new THREE.Box3().setFromObject(frameBBoxMesh);
     cameraControlsP.setBoundary(sceneBBox);
@@ -295,7 +300,7 @@ function initCameraControls()
     cameraBoundsO = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
     cameraBoundsO.center.copy(sceneTargetO);
     cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
-    cameraControlsO.setLookAt(0, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
+    cameraControlsO.setLookAt(0.7, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
     cameraControlsO.rotateAzimuthTo(-90 * (Math.PI / 180), false);
 };
 
@@ -323,7 +328,8 @@ window.addEventListener('resize', () =>
 ///// Render /////
 function renderScene()
 {
-    logic.raycast(scene, cameraP);
+    logic.updateLocksPosition(cameraP);
+    // logic.raycast(scene, cameraP);
 
     gui.fps.begin();
     const delta = clock.getDelta();
