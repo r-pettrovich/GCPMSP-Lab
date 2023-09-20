@@ -15,7 +15,7 @@ import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastS
 import * as gui from './gui.js';
 import * as logic from './logic.js';
 
-let cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, mixer, animationsList = {}, meshName, meshList = {}, materialName, materialsList = {}, cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
+let cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, mixer, animationsList = [], meshName, meshList = [], materialName, materialsList = [], cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
 let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, cameraO, cameraOValue = 2, clock, canvas, width, height, renderer, composer, taaPassP, taaPassO, outputPass, bcPass;
 

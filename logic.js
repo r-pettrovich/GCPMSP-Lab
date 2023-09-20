@@ -1,10 +1,8 @@
 import {gsap} from 'gsap';
-import {Raycaster, Vector2, Vector3} from 'three';
 
-let intersects, raycaster = new Raycaster(), pointer = new Vector2(), screenLockA = new Vector2(), pointLockA = new Vector3(), locatorLockA;
+let actions = [], locators = [], locks = [], locatorsCoordinates = [], locatorsProjections = [], keypadMaterials = [];
 let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true, buildingVisible = true, zonesVisible = false;
 let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones'), buttonCamera = document.getElementById('button-camera');
-let lockA = document.getElementById('lock_a');
 export let cameraProjection = 'persp';
 
 ///// Toggle device block /////
@@ -37,7 +35,7 @@ export function updateLoadingBar (progress, startDelay)
         gsap.set('#top', {display: 'flex'});
         gsap.set('#menu', {display: 'flex'});
         gsap.set('#zones', {display: 'flex'});
-        gsap.set('#lock_a', {display: 'block'});
+        gsap.set('.lock', {display: 'block'});
     }
 };
 
@@ -47,7 +45,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
     // Hide objects
     for (meshName in meshList)
     {
-        if (meshName.includes('Collision') || meshName.includes('Static_Floor_Frame') || meshName.includes('Zones'))
+        if (meshName.includes('Static_Floor_Frame') || meshName.includes('Zones'))
         {
             meshList[meshName].visible = false;
         }
@@ -57,25 +55,44 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
     const floorFrame = scene.getObjectByName('Static_Floor_Frame');
     const zonesBuilding = scene.getObjectByName('Zones_Building');
     const zonesFrame = scene.getObjectByName('Zones_Frame');
-    // Prepare locks position variables
-    locatorLockA = scene.getObjectByName('Locator_Lock_a');
-
+    // Prepare locators variables
+    locators = [
+        scene.getObjectByName('Locator_Lock_a'),
+        scene.getObjectByName('Locator_Lock_b'),
+        scene.getObjectByName('Locator_Lock_c'),
+        scene.getObjectByName('Locator_Lock_d'),
+        scene.getObjectByName('Locator_Lock_e'),
+        scene.getObjectByName('Locator_Lock_f')
+    ];
+    locks = [
+        document.getElementById('lock-a'),
+        document.getElementById('lock-b'),
+        document.getElementById('lock-c'),
+        document.getElementById('lock-d'),
+        document.getElementById('lock-e'),
+        document.getElementById('lock-f')
+    ];
     // Prepare materials variables
-    const keypadAMat = materialsList['M_KeyPad_a'];
-    const keypadBMat = materialsList['M_KeyPad_b'];
-    const keypadCMat = materialsList['M_KeyPad_c'];
-    const keypadDMat = materialsList['M_KeyPad_d'];
-    const keypadEMat = materialsList['M_KeyPad_e'];
+    keypadMaterials = [
+        materialsList['M_KeyPad_a'],
+        materialsList['M_KeyPad_b'],
+        materialsList['M_KeyPad_c'],
+        materialsList['M_KeyPad_d'],
+        materialsList['M_KeyPad_e']
+    ];
     // Prepare animations variables
-    const DoorAAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_a_Action'));
-    const DoorBAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_b_Action'));
-    const DoorCAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_c_Action'));
-    const DoorDAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_d_Action'));
-    const DoorEAction = mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_e_Action'));
-    const Window_a_Action = mixer.clipAction(animationsList.find((anim) => anim.name === 'Window_a_Action'));
-    const Window_a_Handle_Action = mixer.clipAction(animationsList.find((anim) => anim.name === 'Window_a_Handle_Action'));
-    const Fan_Action = mixer.clipAction(animationsList.find((anim) => anim.name === 'Fan_Action'));
-    Fan_Action.play();
+    actions = [
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_a_Action')),
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_b_Action')),
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_c_Action')),
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_d_Action')),
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Door_e_Action')),
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Window_a_Action')),
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Window_a_Handle_Action')),
+        mixer.clipAction(animationsList.find((anim) => anim.name === 'Fan_Action'))
+    ]
+    // Play fan animation
+    actions[7].play();
 
     ///// UI buttons actions /////
     // Toggle building visibility
@@ -112,6 +129,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 cameraBoundsP.center.copy(frameTargetP);
                 cameraControlsP.setLookAt(6.5, 2.5, 0.62, frameTargetP.x, frameTargetP.y, frameTargetP.z, true);
                 cameraControlsP.fitToSphere(cameraBoundsP, true);
+                gsap.set('.lock', {display: 'block'});
             } else if (cameraProjection === 'ortho')
             {
                 if (device === 'mobile')
@@ -224,7 +242,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         if (cameraProjection === 'persp')
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
-            gsap.set('#lock_a', {display: 'none'});
+            gsap.set('.lock', {display: 'none'});
             buttonCamera.classList.add('button-camera-pressed');
             buttonCamera.title = "Перспективная проекция";
             cameraProjection = 'ortho';
@@ -269,7 +287,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         } else
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
-            gsap.set('#lock_a', {display: 'block'});
+            gsap.set('.lock', {display: 'block'});
             buttonCamera.classList.remove('button-camera-pressed');
             buttonCamera.title = "Ортографическая проекция";
             cameraProjection = 'persp';
@@ -312,185 +330,75 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         };
     });
 
-
-    ///// Cursor 'pointer' when howering over collisions /////
-    /* document.addEventListener('mousemove', () =>
-    {
-        if (intersects.length > 0)
-        {
-            if (intersects[0].object.name.includes('Collision'))
-            {
-                document.body.style.cursor = 'pointer';
-            }
-            else
-            {
-                document.body.style.cursor = 'default';
-            }
-        };
-    }); */
-
     ///// Handle interactive objects /////
-    /* document.addEventListener('click', () =>
+    // Door_a
+    locks[0].addEventListener ('click', () =>
     {
-        if (intersects.length > 0)
+        if (!actions[0].isRunning())
         {
-            // Door_a
-            if (intersects[0].object.name === 'KeyPad_a_Collision')
+            if (doorAClosed === true)
             {
-                if (!DoorAAction.isRunning())
-                {
-                    if (doorAClosed === true)
-                    {
-                        DoorAAction.timeScale = 1;
-                        DoorAAction.paused = false;
-                        DoorAAction.play().setLoop(1, 0).clampWhenFinished = true;
-                        keypadAMat.emissive.set(0x09ff00);
-                        doorAClosed = false;
-                    }
-                    else
-                    {
-                        DoorAAction.timeScale = -1;
-                        DoorAAction.paused = false;
-                        setTimeout (() => {keypadAMat.emissive.set(0xFF0002)}, 1500);
-                        doorAClosed = true;
-                    }
-                }
-            };
-            // Door_b
-            if (intersects[0].object.name === 'KeyPad_b_Collision')
+                gsap.to(locks[0], {rotationY: 180, duration: 0.3, ease: "power1.out",});
+                setTimeout (() => {locks[0].classList.add('lock-pressed')}, 150);
+                actions[0].timeScale = 1;
+                actions[0].paused = false;
+                actions[0].play().setLoop(1, 0).clampWhenFinished = true;
+                keypadMaterials[0].emissive.set(0x09ff00);
+                doorAClosed = false;
+            } else
             {
-                if (!DoorBAction.isRunning())
-                {
-                    if (doorBClosed === true)
-                    {
-                        DoorBAction.timeScale = 1;
-                        DoorBAction.paused = false;
-                        DoorBAction.play().setLoop(1, 0).clampWhenFinished = true;
-                        keypadBMat.emissive.set(0x09ff00);
-                        doorBClosed = false;
-                    }
-                    else
-                    {
-                        DoorBAction.timeScale = -1;
-                        DoorBAction.paused = false;
-                        setTimeout (() => {keypadBMat.emissive.set(0xFF0002)}, 1500);
-                        doorBClosed = true;
-                    }
-                }
-            };
-            // Door_c
-            if (intersects[0].object.name === 'KeyPad_c_Collision')
-            {
-                if (!DoorCAction.isRunning())
-                {
-                    if (doorCClosed === true)
-                    {
-                        DoorCAction.timeScale = 1;
-                        DoorCAction.paused = false;
-                        DoorCAction.play().setLoop(1, 0).clampWhenFinished = true;
-                        keypadCMat.emissive.set(0x09ff00);
-                        doorCClosed = false;
-                    }
-                    else
-                    {
-                        DoorCAction.timeScale = -1;
-                        DoorCAction.paused = false;
-                        setTimeout (() => {keypadCMat.emissive.set(0xFF0002)}, 1500);
-                        doorCClosed = true;
-                    }
-                }
-            };
-            // Door_d
-            if (intersects[0].object.name === 'KeyPad_d_Collision')
-            {
-                if (!DoorDAction.isRunning())
-                {
-                    if (doorDClosed === true)
-                    {
-                        DoorDAction.timeScale = 1;
-                        DoorDAction.paused = false;
-                        DoorDAction.play().setLoop(1, 0).clampWhenFinished = true;
-                        keypadDMat.emissive.set(0x09ff00);
-                        doorDClosed = false;
-                    }
-                    else
-                    {
-                        DoorDAction.timeScale = -1;
-                        DoorDAction.paused = false;
-                        setTimeout (() => {keypadDMat.emissive.set(0xFF0002)}, 1500);
-                        doorDClosed = true;
-                    }
-                }
-            };
-            // Door_e
-            if (intersects[0].object.name === 'KeyPad_e_Collision')
-            {
-                if (!DoorEAction.isRunning())
-                {
-                    if (doorEClosed === true)
-                    {
-                        DoorEAction.timeScale = 1;
-                        DoorEAction.paused = false;
-                        DoorEAction.play().setLoop(1, 0).clampWhenFinished = true;
-                        keypadEMat.emissive.set(0x09ff00);
-                        doorEClosed = false;
-                    }
-                    else
-                    {
-                        DoorEAction.timeScale = -1;
-                        DoorEAction.paused = false;
-                        setTimeout (() => {keypadEMat.emissive.set(0xFF0002)}, 1500);
-                        doorEClosed = true;
-                    }
-                }
-            };
-            // Window_a
-            if (intersects[0].object.name === 'Window_a_Collision')
-            {
-                if (!Window_a_Action.isRunning())
-                {
-                    if (WindowAClosed === true)
-                    {
-                        Window_a_Action.timeScale = 1;
-                        Window_a_Action.paused = false;
-                        Window_a_Handle_Action.timeScale = 1;
-                        Window_a_Handle_Action.paused = false;
-                        Window_a_Action.play().setLoop(1, 0).clampWhenFinished = true;
-                        Window_a_Handle_Action.play().setLoop(1, 0).clampWhenFinished = true;
-                        WindowAClosed = false;
-                    }
-                    else
-                    {
-                        Window_a_Action.timeScale = -1;
-                        Window_a_Handle_Action.timeScale = -1;
-                        Window_a_Action.paused = false;
-                        setTimeout (() => {Window_a_Handle_Action.paused = false;}, 950);
-                        WindowAClosed = true;
-                    }
-                }
+                gsap.to(locks[0], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                setTimeout (() => {locks[0].classList.remove('lock-pressed')}, 150);
+                actions[0].timeScale = -1;
+                actions[0].paused = false;
+                setTimeout (() => {keypadMaterials[0].emissive.set(0xFF0002)}, 1500);
+                doorAClosed = true;
             };
         };
-    }); */
+    });
+    // Door_b
+    locks[1].addEventListener ('click', () =>
+    {
+        if (!actions[1].isRunning())
+        {
+            if (doorBClosed === true)
+            {
+                gsap.to(locks[1], {rotationY: 180, duration: 0.3, ease: "power1.out",});
+                setTimeout (() => {locks[1].classList.add('lock-pressed')}, 150);
+                actions[1].timeScale = 1;
+                actions[1].paused = false;
+                actions[1].play().setLoop(1, 0).clampWhenFinished = true;
+                keypadMaterials[1].emissive.set(0x09ff00);
+                doorBClosed = false;
+            } else
+            {
+                gsap.to(locks[1], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                setTimeout (() => {locks[1].classList.remove('lock-pressed')}, 150);
+                actions[1].timeScale = -1;
+                actions[1].paused = false;
+                setTimeout (() => {keypadMaterials[1].emissive.set(0xFF0002)}, 1500);
+                doorBClosed = true;
+            };
+        };
+    });
 };
 
-///// Update loks position /////
+///// Update loks positions /////
 export function updateLocksPosition(cameraP)
 {
-    pointLockA.copy(locatorLockA.position);
-    pointLockA.project(cameraP);
-    screenLockA.x = (pointLockA.x + 1) * window.innerWidth / 2;
-    screenLockA.y = (-pointLockA.y + 1) * window.innerHeight / 2;
-    gsap.set('#lock_a', {x: screenLockA.x, y: screenLockA.y});
+    for (let i = 0; i < locators.length; i++)
+    {
+        locatorsCoordinates[i] = locators[i].position.clone();
+        locatorsCoordinates[i].project(cameraP);
+        locatorsProjections[i] = {};
+        locatorsProjections[i].x = (locatorsCoordinates[i].x + 1) * window.innerWidth / 2;
+        locatorsProjections[i].y = (-locatorsCoordinates[i].y + 1) * window.innerHeight / 2;
+        gsap.set(locks[i], {x: locatorsProjections[i].x, y: locatorsProjections[i].y});
+    };
 };
 
 ///// Raycaster /////
-/* document.addEventListener('mousemove', (event) =>
-{
-    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-});
-
-export function raycast(scene, cameraP)
+/* export function raycast(scene, cameraP)
 {
     raycaster.setFromCamera(pointer, cameraP);
     intersects = raycaster.intersectObjects(scene.children);

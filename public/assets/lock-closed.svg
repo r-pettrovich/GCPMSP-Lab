@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62.5 62.5">
-  <circle id="Circle" cx="31.2" cy="31.2" r="29.2" style="fill: none; stroke: #3b4042; stroke-miterlimit: 10; stroke-width: 4px;"/>
-  <path id="Body" d="m37.1,26.2c.5-.2,1.1-.3,1.6-.2,2.6.6,4.6,3.1,4.6,5.9v9c0,3.3-2.7,6-6,6h-12.1c-3.3,0-6-2.7-6-6v-9c0-2.8,2-5.3,4.6-5.9s1.1,0,1.6.2c3.3,1.5,8.5,1.5,11.6,0Z" style="fill: none; stroke: #3b4042; stroke-miterlimit: 10; stroke-width: 4px;"/>
-  <path id="Lock_Closed" d="m38.3,24.9c0-4.8-3-8.7-7-8.7s-2.9.6-4.1,1.5c-1.9,1.6-3.2,4.2-3.2,7.2" style="fill: none; stroke: #3b4042; stroke-miterlimit: 10; stroke-width: 4px;"/>
-</svg>
