@@ -24,7 +24,7 @@
     --zones-label-padding: 10px;
     --zones-color-square-size: 20px;
     --zones-p-font-size: 13px;
-    --lock-size: 30px;
+    --lock-size: 24px;
 }
 
 .body {
@@ -58,21 +58,31 @@
     right: 10px;
     position: absolute;
     user-select: none;
+    -webkit-user-select: none;
     z-index: 10;
 }
 
-.lock {
+.lock-container {
     width: var(--lock-size);
     height: var(--lock-size);
     top: calc(var(--lock-size) / -2);
     left: calc(var(--lock-size) / -2);
     position: absolute;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.lock {
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
     background-image: url('/assets/lock-open.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100%;
-    user-select: none;
-    cursor: pointer;
 }
 
 .lock-pressed {
@@ -100,6 +110,8 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .logo {
@@ -117,7 +129,6 @@
     height: auto;
     position: relative;
     color: var(--gcpmsp-color);
-    user-select: none;
 }
 
 .title-p {
@@ -158,6 +169,7 @@
     border-radius: 0 0 10px 10px;
     box-shadow: var(--menu-button-shadow);
     user-select: none;
+    -webkit-user-select: none;
     z-index: 2;
 }
 
@@ -196,6 +208,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
     z-index: 1;
 }
 
@@ -241,12 +255,14 @@
     left: 0px;
     margin: 0px;
     position: absolute;
-    z-index: 50;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: var(--canvas-background);
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 50;
 }
 
 .preloader-logo {
@@ -277,11 +293,13 @@
     left: 0px;
     margin: 0px;
     position: absolute;
-    z-index: 100;
     background: url('/assets/rotate-device.svg'), var(--canvas-background);
     background-repeat: no-repeat;
     background-position: center, center;
     background-size: 30%, 100%;
+    z-index: 100;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .webgl-block-logo {
@@ -329,6 +347,6 @@
         --zones-label-width: 200px;
         --zones-color-square-size: 25px;
         --zones-p-font-size: 16px;
-        --lock-size: 26px;
+        --lock-size: 24px;
     }
 }

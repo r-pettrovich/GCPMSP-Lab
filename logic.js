@@ -1,6 +1,6 @@
 import {gsap} from 'gsap';
 
-let actions = [], locators = [], locks = [], locatorsCoordinates = [], locatorsProjections = [], keypadMaterials = [];
+let actions = [], locators = [], lockContainers = [], locks = [], locatorsCoordinates = [], locatorsProjections = [], keypadMaterials = [];
 let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true, buildingVisible = true, zonesVisible = false;
 let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones'), buttonCamera = document.getElementById('button-camera');
 export let cameraProjection = 'persp';
@@ -35,7 +35,6 @@ export function updateLoadingBar (progress, startDelay)
         gsap.set('#top', {display: 'flex'});
         gsap.set('#menu', {display: 'flex'});
         gsap.set('#zones', {display: 'flex'});
-        gsap.set('.lock', {display: 'block'});
     }
 };
 
@@ -64,6 +63,14 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         scene.getObjectByName('Locator_Lock_e'),
         scene.getObjectByName('Locator_Lock_f')
     ];
+    lockContainers = [
+        document.getElementById('lock-a-container'),
+        document.getElementById('lock-b-container'),
+        document.getElementById('lock-c-container'),
+        document.getElementById('lock-d-container'),
+        document.getElementById('lock-e-container'),
+        document.getElementById('lock-f-container')
+    ]
     locks = [
         document.getElementById('lock-a'),
         document.getElementById('lock-b'),
@@ -106,10 +113,6 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             floorFrame.visible = true;
             building.visible = false;
             zonesBuilding.visible = false;
-            building.traverse((object) =>
-            {
-                object.layers.set(1);
-            });
             buildingVisible = false;
             // Camera behavior
             if (cameraProjection === 'persp')
@@ -118,7 +121,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 {
                     cameraBoundsP.radius = 4;
                     cameraControlsP.minDistance = 8;
-                    cameraControlsP.maxDistance = 28;
+                    cameraControlsP.maxDistance = 20;
                 } else
                 {
                     cameraBoundsP.radius = 3.5;
@@ -154,10 +157,6 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.remove('button-building-pressed');
             buttonBuilding.title = "Скрыть здание";
-            building.traverse((object) =>
-            {
-                object.layers.set(0);
-            });
             setTimeout(() =>
             {
                 floorFrame.visible = false;
@@ -167,7 +166,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                     zonesBuilding.visible = true;
                 };
                 buildingVisible = true;
-            }, 250);
+            }, 200);
             // Camera behavior
             if (cameraProjection === 'persp')
             {
@@ -315,7 +314,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 {
                     cameraBoundsP.radius = 4;
                     cameraControlsP.minDistance = 8;
-                    cameraControlsP.maxDistance = 28;
+                    cameraControlsP.maxDistance = 20;
                 } else
                 {
                     cameraBoundsP.radius = 3.5;
@@ -381,6 +380,109 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             };
         };
     });
+    // Door_c
+    locks[2].addEventListener ('click', () =>
+    {
+        if (!actions[2].isRunning())
+        {
+            if (doorCClosed === true)
+            {
+                gsap.to(locks[2], {rotationY: 180, duration: 0.3, ease: "power1.out",});
+                setTimeout (() => {locks[2].classList.add('lock-pressed')}, 150);
+                actions[2].timeScale = 1;
+                actions[2].paused = false;
+                actions[2].play().setLoop(1, 0).clampWhenFinished = true;
+                keypadMaterials[2].emissive.set(0x09ff00);
+                doorCClosed = false;
+            } else
+            {
+                gsap.to(locks[2], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                setTimeout (() => {locks[2].classList.remove('lock-pressed')}, 150);
+                actions[2].timeScale = -1;
+                actions[2].paused = false;
+                setTimeout (() => {keypadMaterials[2].emissive.set(0xFF0002)}, 1500);
+                doorCClosed = true;
+            };
+        };
+    });
+    // Door_d
+    locks[3].addEventListener ('click', () =>
+    {
+        if (!actions[3].isRunning())
+        {
+            if (doorDClosed === true)
+            {
+                gsap.to(locks[3], {rotationY: 180, duration: 0.3, ease: "power1.out",});
+                setTimeout (() => {locks[3].classList.add('lock-pressed')}, 150);
+                actions[3].timeScale = 1;
+                actions[3].paused = false;
+                actions[3].play().setLoop(1, 0).clampWhenFinished = true;
+                keypadMaterials[3].emissive.set(0x09ff00);
+                doorDClosed = false;
+            } else
+            {
+                gsap.to(locks[3], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                setTimeout (() => {locks[3].classList.remove('lock-pressed')}, 150);
+                actions[3].timeScale = -1;
+                actions[3].paused = false;
+                setTimeout (() => {keypadMaterials[3].emissive.set(0xFF0002)}, 1500);
+                doorDClosed = true;
+            };
+        };
+    });
+    // Door_e
+    locks[4].addEventListener ('click', () =>
+    {
+        if (!actions[4].isRunning())
+        {
+            if (doorEClosed === true)
+            {
+                gsap.to(locks[4], {rotationY: 180, duration: 0.3, ease: "power1.out",});
+                setTimeout (() => {locks[4].classList.add('lock-pressed')}, 150);
+                actions[4].timeScale = 1;
+                actions[4].paused = false;
+                actions[4].play().setLoop(1, 0).clampWhenFinished = true;
+                keypadMaterials[4].emissive.set(0x09ff00);
+                doorEClosed = false;
+            } else
+            {
+                gsap.to(locks[4], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                setTimeout (() => {locks[4].classList.remove('lock-pressed')}, 150);
+                actions[4].timeScale = -1;
+                actions[4].paused = false;
+                setTimeout (() => {keypadMaterials[4].emissive.set(0xFF0002)}, 1500);
+                doorEClosed = true;
+            };
+        };
+    });
+    // Window_a
+    locks[5].addEventListener ('click', () =>
+    {
+        if (!actions[5].isRunning())
+        {
+            if (WindowAClosed === true)
+            {
+                gsap.to(locks[5], {rotationY: 180, duration: 0.3, ease: "power1.out",});
+                setTimeout (() => {locks[5].classList.add('lock-pressed')}, 150);
+                actions[5].timeScale = 1;
+                actions[6].timeScale = 1;
+                actions[5].paused = false;
+                actions[6].paused = false;
+                actions[5].play().setLoop(1, 0).clampWhenFinished = true;
+                actions[6].play().setLoop(1, 0).clampWhenFinished = true;
+                WindowAClosed = false;
+            } else
+            {
+                gsap.to(locks[5], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                setTimeout (() => {locks[5].classList.remove('lock-pressed')}, 150);
+                actions[5].timeScale = -1;
+                actions[6].timeScale = -1;
+                actions[5].paused = false;
+                setTimeout (() => {actions[6].paused = false}, 950);
+                WindowAClosed = true;
+            };
+        };
+    });
 };
 
 ///// Update loks positions /////
@@ -393,13 +495,14 @@ export function updateLocksPosition(cameraP)
         locatorsProjections[i] = {};
         locatorsProjections[i].x = (locatorsCoordinates[i].x + 1) * window.innerWidth / 2;
         locatorsProjections[i].y = (-locatorsCoordinates[i].y + 1) * window.innerHeight / 2;
-        gsap.set(locks[i], {x: locatorsProjections[i].x, y: locatorsProjections[i].y});
+        gsap.set(lockContainers[i], {x: locatorsProjections[i].x, y: locatorsProjections[i].y});
+    };
+    // Toggle locks visibility
+    if (cameraProjection === 'persp' && buildingVisible === false)
+    {
+        gsap.set('.lock-container', {display: 'block'});
+    } else
+    {
+        gsap.set('.lock-container', {display: 'none'});
     };
 };
-
-///// Raycaster /////
-/* export function raycast(scene, cameraP)
-{
-    raycaster.setFromCamera(pointer, cameraP);
-    intersects = raycaster.intersectObjects(scene.children);
-}; */

@@ -12,7 +12,9 @@ export let settings =
     exposure: 1.05,
     brightness: 0.00,
     contrast: 0.12,
-    axisVisibility: false
+    axisVisibility: false,
+    sceneBBoxVisibility: false,
+    frameBBoxVisibility: false
 };
 // Camera
 export let cam = 
@@ -44,7 +46,7 @@ let mats =
 };
 
 ///// Main function /////
-export function initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, materialName, materialsList)
+export function initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, sceneBBoxMesh, frameBBoxMesh, materialName, materialsList)
 {
     const pane = new Pane({container: document.getElementById('gui')});
     pane.registerPlugin(EssentialsPlugin);
@@ -104,7 +106,7 @@ export function initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, c
     {
         bcPass.uniforms["contrast"].value = ev.value;
     })
-    // Axis toggle
+    // Toggle axis helper visibility
     Settings.addBinding(settings, 'axisVisibility', {label: 'Axis Helper'})
     .on('change', (ev) =>
     {
@@ -114,7 +116,7 @@ export function initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, c
         } else
         {
             scene.remove(axisHelper);
-        }
+        };
     });
 
     ///// Camera /////
@@ -139,11 +141,36 @@ export function initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, c
         cameraBoundsO.radius = ev.value;
         cameraControlsO.fitToSphere(cameraBoundsO, false);
     });
+    // Toggle scene bounding box visibility
+    Camera.addBinding(settings, 'sceneBBoxVisibility', {label: 'Scene Bounding Box'})
+    .on('change', (ev) =>
+    {
+        if(ev.value)
+        {
+            sceneBBoxMesh.visible = true;
+        } else
+        {
+            sceneBBoxMesh.visible = false;
+        };
+    });
+    // Toggle frame bounding box visibility
+    Camera.addBinding(settings, 'frameBBoxVisibility', {label: 'Frame Bounding Box'})
+    .on('change', (ev) =>
+    {
+        if(ev.value)
+        {
+            frameBBoxMesh.visible = true;
+        } else
+        {
+            frameBBoxMesh.visible = false;
+        };
+    });
     // Get camera position button
     Camera.addButton({title: 'Get Camera Position'})
     .on('click', () =>
     {
-        console.log(cameraControlsP.getPosition());
+        console.log('Cam Persp:', cameraControlsP.getPosition());
+        console.log('Cam Ortho:', cameraControlsO.getPosition());
     });
 
     ///// Materials /////

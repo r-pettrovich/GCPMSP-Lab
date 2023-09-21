@@ -15,7 +15,7 @@ import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastS
 import * as gui from './gui.js';
 import * as logic from './logic.js';
 
-let cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, mixer, animationsList = [], meshName, meshList = [], materialName, materialsList = [], cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
+let cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, sceneBBoxMesh, frameBBoxMesh, mixer, animationsList = [], meshName, meshList = [], materialName, materialsList = [], cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
 let maxAnisotropy, pmremGenerator;
 let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, cameraO, cameraOValue = 2, clock, canvas, width, height, renderer, composer, taaPassP, taaPassO, outputPass, bcPass;
 
@@ -111,7 +111,7 @@ function checkDevice()
         cameraBoundsO.radius = 8;
         cameraControlsO.minZoom = 35;
         cameraControlsO.maxZoom = 180;
-        cameraControlsO.dollySpeed = 2;
+        cameraControlsO.dollySpeed = 1.5;
         // Quality settings
         if (gpuTier === 1)
         {
@@ -183,7 +183,7 @@ function loadApp()
         {
             cameraControlsP.fitToSphere(cameraBoundsP, true);
             cameraControlsO.fitToSphere(cameraBoundsO, false);
-            gui.initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, materialName, materialsList);
+            gui.initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, sceneBBoxMesh, frameBBoxMesh, materialName, materialsList);
             logic.updateActions(device, scene, cameraControlsP, cameraControlsO, cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, materialsList, meshName, meshList, mixer, animationsList);
             renderScene();
         }, startDelay);
@@ -260,8 +260,8 @@ function loadApp()
 function initCameraControls()
 {
     cameraControlsP = new CameraControls(cameraP, canvas);
-    sceneTargetP = new THREE.Vector3(0.65, 1.58, -4.65);
-    frameTargetP = new THREE.Vector3(-0.025, 1.58, -3.5);
+    sceneTargetP = new THREE.Vector3(0.65, 1, -4.65);
+    frameTargetP = new THREE.Vector3(-0.025, 1, -3.5);
     cameraControlsO = new CameraControls(cameraO, canvas);
     sceneTargetO = new THREE.Vector3(0.7, 0, -4.65);
     frameTargetO = new THREE.Vector3(-0.025, 0, -3.5);
@@ -280,16 +280,14 @@ function initCameraControls()
     cameraControlsO.touches.three = CameraControls.ACTION.NONE;
     cameraControlsO.truckSpeed = 2;
     // Camera target boundary box
-    const sceneBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(12, 4.5, 12), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
-    const frameBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 4.5, 9), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
+    sceneBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(12, 4.5, 12), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
+    frameBBoxMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 4.5, 9), new THREE.MeshBasicMaterial({color: 0x424249, wireframe: true}));
     sceneBBoxMesh.position.copy(sceneTargetP);
     frameBBoxMesh.position.copy(frameTargetP);
     scene.add(sceneBBoxMesh);
     scene.add(frameBBoxMesh);
     sceneBBoxMesh.visible = false;
     frameBBoxMesh.visible = false;
-    // sceneBBoxMesh.layers.set(1);
-    // frameBBoxMesh.layers.set(1);
     sceneBBox = new THREE.Box3().setFromObject(sceneBBoxMesh);
     frameBBox = new THREE.Box3().setFromObject(frameBBoxMesh);
     cameraControlsP.setBoundary(sceneBBox);
@@ -328,9 +326,6 @@ window.addEventListener('resize', () =>
 ///// Render /////
 function renderScene()
 {
-    logic.updateLocksPosition(cameraP);
-    // logic.raycast(scene, cameraP);
-
     gui.fps.begin();
     const delta = clock.getDelta();
     // Animation mixer
@@ -338,6 +333,8 @@ function renderScene()
     {
         mixer.update(delta);
     };
+    // Update loks positions before update cameraControls
+    logic.updateLocksPosition(cameraP);
     // Update cameraControls
     cameraControlsP.update(delta);
     cameraControlsO.update(delta);
