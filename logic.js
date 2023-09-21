@@ -1,7 +1,7 @@
 import {gsap} from 'gsap';
 
-let actions = [], locators = [], lockContainers = [], locks = [], locatorsCoordinates = [], locatorsProjections = [], keypadMaterials = [];
-let doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true, buildingVisible = true, zonesVisible = false;
+let actions = [], keypadMaterials = [], locators = [], locatorsCoordinates = [], locatorsProjections = [], lockContainers = [], locks = [];
+let buildingVisible = true, zonesVisible = false, doorAClosed = true, doorBClosed = true, doorCClosed = true, doorDClosed = true, doorEClosed = true, WindowAClosed = true;
 let buttonBuilding = document.getElementById('button-building'), buttonZones = document.getElementById('button-zones'), buttonCamera = document.getElementById('button-camera');
 export let cameraProjection = 'persp';
 
@@ -35,7 +35,7 @@ export function updateLoadingBar (progress, startDelay)
         gsap.set('#top', {display: 'flex'});
         gsap.set('#menu', {display: 'flex'});
         gsap.set('#zones', {display: 'flex'});
-    }
+    };
 };
 
 ///// Update actions /////
@@ -47,7 +47,7 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         if (meshName.includes('Static_Floor_Frame') || meshName.includes('Zones'))
         {
             meshList[meshName].visible = false;
-        }
+        };
     };
     // Prepare objects variables
     const building = scene.getObjectByName('Static_Building');
@@ -132,7 +132,6 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 cameraBoundsP.center.copy(frameTargetP);
                 cameraControlsP.setLookAt(6.5, 2.5, 0.62, frameTargetP.x, frameTargetP.y, frameTargetP.z, true);
                 cameraControlsP.fitToSphere(cameraBoundsP, true);
-                gsap.set('.lock', {display: 'block'});
             } else if (cameraProjection === 'ortho')
             {
                 if (device === 'mobile')
@@ -241,7 +240,6 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         if (cameraProjection === 'persp')
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
-            gsap.set('.lock', {display: 'none'});
             buttonCamera.classList.add('button-camera-pressed');
             buttonCamera.title = "Перспективная проекция";
             cameraProjection = 'ortho';
@@ -286,7 +284,6 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         } else
         {
             gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
-            gsap.set('.lock', {display: 'block'});
             buttonCamera.classList.remove('button-camera-pressed');
             buttonCamera.title = "Ортографическая проекция";
             cameraProjection = 'persp';
@@ -337,8 +334,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorAClosed === true)
             {
-                gsap.to(locks[0], {rotationY: 180, duration: 0.3, ease: "power1.out",});
-                setTimeout (() => {locks[0].classList.add('lock-pressed')}, 150);
+                gsap.to(locks[0], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[0].classList.add('lock-pressed')
+                    gsap.to(locks[0], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[0].timeScale = 1;
                 actions[0].paused = false;
                 actions[0].play().setLoop(1, 0).clampWhenFinished = true;
@@ -346,8 +348,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorAClosed = false;
             } else
             {
-                gsap.to(locks[0], {rotationY: 0, duration: 0.3, ease: "power1.out"});
-                setTimeout (() => {locks[0].classList.remove('lock-pressed')}, 150);
+                gsap.to(locks[0], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[0].classList.remove('lock-pressed')
+                    gsap.to(locks[0], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[0].timeScale = -1;
                 actions[0].paused = false;
                 setTimeout (() => {keypadMaterials[0].emissive.set(0xFF0002)}, 1500);
@@ -362,8 +369,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorBClosed === true)
             {
-                gsap.to(locks[1], {rotationY: 180, duration: 0.3, ease: "power1.out",});
-                setTimeout (() => {locks[1].classList.add('lock-pressed')}, 150);
+                gsap.to(locks[1], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[1].classList.add('lock-pressed')
+                    gsap.to(locks[1], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[1].timeScale = 1;
                 actions[1].paused = false;
                 actions[1].play().setLoop(1, 0).clampWhenFinished = true;
@@ -371,8 +383,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorBClosed = false;
             } else
             {
-                gsap.to(locks[1], {rotationY: 0, duration: 0.3, ease: "power1.out"});
-                setTimeout (() => {locks[1].classList.remove('lock-pressed')}, 150);
+                gsap.to(locks[1], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[1].classList.remove('lock-pressed')
+                    gsap.to(locks[1], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[1].timeScale = -1;
                 actions[1].paused = false;
                 setTimeout (() => {keypadMaterials[1].emissive.set(0xFF0002)}, 1500);
@@ -387,8 +404,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorCClosed === true)
             {
-                gsap.to(locks[2], {rotationY: 180, duration: 0.3, ease: "power1.out",});
-                setTimeout (() => {locks[2].classList.add('lock-pressed')}, 150);
+                gsap.to(locks[2], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[2].classList.add('lock-pressed')
+                    gsap.to(locks[2], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[2].timeScale = 1;
                 actions[2].paused = false;
                 actions[2].play().setLoop(1, 0).clampWhenFinished = true;
@@ -396,8 +418,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorCClosed = false;
             } else
             {
-                gsap.to(locks[2], {rotationY: 0, duration: 0.3, ease: "power1.out"});
-                setTimeout (() => {locks[2].classList.remove('lock-pressed')}, 150);
+                gsap.to(locks[2], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[2].classList.remove('lock-pressed')
+                    gsap.to(locks[2], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[2].timeScale = -1;
                 actions[2].paused = false;
                 setTimeout (() => {keypadMaterials[2].emissive.set(0xFF0002)}, 1500);
@@ -412,8 +439,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorDClosed === true)
             {
-                gsap.to(locks[3], {rotationY: 180, duration: 0.3, ease: "power1.out",});
-                setTimeout (() => {locks[3].classList.add('lock-pressed')}, 150);
+                gsap.to(locks[3], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[3].classList.add('lock-pressed')
+                    gsap.to(locks[3], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[3].timeScale = 1;
                 actions[3].paused = false;
                 actions[3].play().setLoop(1, 0).clampWhenFinished = true;
@@ -421,8 +453,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorDClosed = false;
             } else
             {
-                gsap.to(locks[3], {rotationY: 0, duration: 0.3, ease: "power1.out"});
-                setTimeout (() => {locks[3].classList.remove('lock-pressed')}, 150);
+                gsap.to(locks[3], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[3].classList.remove('lock-pressed')
+                    gsap.to(locks[3], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[3].timeScale = -1;
                 actions[3].paused = false;
                 setTimeout (() => {keypadMaterials[3].emissive.set(0xFF0002)}, 1500);
@@ -437,8 +474,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorEClosed === true)
             {
-                gsap.to(locks[4], {rotationY: 180, duration: 0.3, ease: "power1.out",});
-                setTimeout (() => {locks[4].classList.add('lock-pressed')}, 150);
+                gsap.to(locks[4], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[4].classList.add('lock-pressed')
+                    gsap.to(locks[4], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[4].timeScale = 1;
                 actions[4].paused = false;
                 actions[4].play().setLoop(1, 0).clampWhenFinished = true;
@@ -446,8 +488,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorEClosed = false;
             } else
             {
-                gsap.to(locks[4], {rotationY: 0, duration: 0.3, ease: "power1.out"});
-                setTimeout (() => {locks[4].classList.remove('lock-pressed')}, 150);
+                gsap.to(locks[4], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[4].classList.remove('lock-pressed')
+                    gsap.to(locks[4], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[4].timeScale = -1;
                 actions[4].paused = false;
                 setTimeout (() => {keypadMaterials[4].emissive.set(0xFF0002)}, 1500);
@@ -462,8 +509,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (WindowAClosed === true)
             {
-                gsap.to(locks[5], {rotationY: 180, duration: 0.3, ease: "power1.out",});
-                setTimeout (() => {locks[5].classList.add('lock-pressed')}, 150);
+                gsap.to(locks[5], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[5].classList.add('lock-pressed')
+                    gsap.to(locks[5], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[5].timeScale = 1;
                 actions[6].timeScale = 1;
                 actions[5].paused = false;
@@ -473,8 +525,13 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 WindowAClosed = false;
             } else
             {
-                gsap.to(locks[5], {rotationY: 0, duration: 0.3, ease: "power1.out"});
-                setTimeout (() => {locks[5].classList.remove('lock-pressed')}, 150);
+                gsap.to(locks[5], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                onComplete: () =>
+                {
+                    locks[5].classList.remove('lock-pressed')
+                    gsap.to(locks[5], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                }
+                });
                 actions[5].timeScale = -1;
                 actions[6].timeScale = -1;
                 actions[5].paused = false;

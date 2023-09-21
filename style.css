@@ -51,11 +51,11 @@
     background-color: var(--canvas-background);
 }
 
-.gui {
+.pane {
     width: 330px;
     height: auto;
-    top: 5px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
     position: absolute;
     user-select: none;
     -webkit-user-select: none;
@@ -83,6 +83,8 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .lock-pressed {
@@ -347,6 +349,6 @@
         --zones-label-width: 200px;
         --zones-color-square-size: 25px;
         --zones-p-font-size: 16px;
-        --lock-size: 24px;
+        --lock-size: 26px;
     }
 }

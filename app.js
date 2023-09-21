@@ -12,12 +12,13 @@ import {TAARenderPass} from 'three/addons/postprocessing/TAARenderPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastShader.js';
-import * as gui from './gui.js';
+import * as pane from './pane.js';
 import * as logic from './logic.js';
 
-let cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, sceneBBoxMesh, frameBBoxMesh, mixer, animationsList = [], meshName, meshList = [], materialName, materialsList = [], cameraControlsP, cameraControlsO, axisHelper = new THREE.AxesHelper();
-let maxAnisotropy, pmremGenerator;
-let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, scene, cameraP, cameraO, cameraOValue = 2, clock, canvas, width, height, renderer, composer, taaPassP, taaPassO, outputPass, bcPass;
+let cameraControlsP, cameraControlsO, cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, sceneBBoxMesh, frameBBoxMesh;
+let mixer, animationsList = [], meshName, meshList = [], materialName, materialsList = [], axisHelper = new THREE.AxesHelper();
+let device, orientation, appIsLoaded = false, gpuTier, manager, startDelay = 750, maxAnisotropy, pmremGenerator;
+let scene, cameraP, cameraO, cameraOValue = 2, canvas, width, height, clock, renderer, composer, taaPassP, taaPassO, outputPass, bcPass;
 
 init();
 initCameraControls();
@@ -38,35 +39,35 @@ function init()
     canvas = document.getElementById('webgl');
     width = window.innerWidth;
     height = window.innerHeight;
-    cameraP = new THREE.PerspectiveCamera(gui.cam.FOV, width / height, 1.35, 100);
+    cameraP = new THREE.PerspectiveCamera(pane.cam.FOV, width / height, 1.35, 100);
     cameraO = new THREE.OrthographicCamera(width / -cameraOValue, width / cameraOValue, height / cameraOValue, height / -cameraOValue, 1, 100);
 
     ///// Renderer /////
-    renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: false}); //logarithmicDepthBuffer fixes Apple AO flickering bug, but causing performance drop
-    renderer.toneMapping = gui.settings.tonemapping;
-    renderer.toneMappingExposure = gui.settings.exposure;
+    renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: false}); //logarithmicDepthBuffer fixes Apple AO flickering bug, but causing performance drop. Increase camera near clip instead
+    renderer.toneMapping = pane.settings.tonemapping;
+    renderer.toneMappingExposure = pane.settings.exposure;
     renderer.setSize(width, height);
-    renderer.setPixelRatio(gui.settings.pixelRatio);
+    renderer.setPixelRatio(pane.settings.pixelRatio);
     canvas.appendChild(renderer.domElement);
     maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
 
     ///// Postprocess /////
     composer = new EffectComposer(renderer);
     composer.setSize(width, height);
-    composer.setPixelRatio(gui.settings.pixelRatio);
+    composer.setPixelRatio(pane.settings.pixelRatio);
     // TAA render pass
     taaPassP = new TAARenderPass(scene, cameraP);
     taaPassP.enabled = true;
     taaPassO = new TAARenderPass(scene, cameraO);
     taaPassO.enabled = false;
-    taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel;
+    taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel;
     taaPassP.unbiased = taaPassO.unbiased = true; // false - for better performance
     // Output pass
     outputPass = new OutputPass();
     // BrightnessContrast
     bcPass = new ShaderPass(BrightnessContrastShader);
-    bcPass.uniforms["brightness"].value = gui.settings.brightness;
-    bcPass.uniforms["contrast"].value = gui.settings.contrast;
+    bcPass.uniforms["brightness"].value = pane.settings.brightness;
+    bcPass.uniforms["contrast"].value = pane.settings.contrast;
 
     ///// Adding passes /////
     composer.addPass(taaPassP);
@@ -99,7 +100,7 @@ function checkDevice()
         cameraControlsO.maxZoom = 120;
         cameraControlsO.dollySpeed = 8;
         // Quality settings
-        taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 0;
+        taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel = 0;
         checkOrientation();
     } else
     {
@@ -115,28 +116,25 @@ function checkDevice()
         // Quality settings
         if (gpuTier === 1)
         {
-            // taaPassP.enabled = false;
-            taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 0;
+            taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel = 0;
         } else if (gpuTier === 2)
         {
             if (window.devicePixelRatio === 1)
             {
-                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 2;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel = 2;
             } else
             {
-                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 1;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel = 1;
             }
-            // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
         } else if (gpuTier === 3)
         {
             if (window.devicePixelRatio === 1)
             {
-                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel;
             } else
             {
-                taaPassP.sampleLevel = taaPassO.sampleLevel = gui.settings.taaLevel = 1;
+                taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel = 1;
             }
-            // renderPass.enabled = false;  // renderPass is redundant if taaPass is working
         };
         logic.toggleDeviceBlock(device, orientation);
         appIsLoaded = true;
@@ -150,8 +148,8 @@ function checkOrientation()
     if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === false)
     {
         orientation = 'portrait';
-        appIsLoaded = true;
         logic.toggleDeviceBlock(device, orientation);
+        appIsLoaded = true;
         loadApp();
     } else if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === true)
     {
@@ -183,7 +181,7 @@ function loadApp()
         {
             cameraControlsP.fitToSphere(cameraBoundsP, true);
             cameraControlsO.fitToSphere(cameraBoundsO, false);
-            gui.initGUI(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, sceneBBoxMesh, frameBBoxMesh, materialName, materialsList);
+            pane.initPane(renderer, composer, taaPassP, taaPassO, bcPass, scene, cameraBoundsP, cameraBoundsO, axisHelper, cameraP, cameraControlsP, cameraControlsO, sceneBBoxMesh, frameBBoxMesh, materialName, materialsList);
             logic.updateActions(device, scene, cameraControlsP, cameraControlsO, cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, materialsList, meshName, meshList, mixer, animationsList);
             renderScene();
         }, startDelay);
@@ -204,12 +202,12 @@ function loadApp()
         scene.add(gltf.scene);
         mixer = new THREE.AnimationMixer(gltf.scene);
         animationsList = gltf.animations;
-        // Searching for materials
+        // Searching for meshes and materials
         scene.traverse((object) =>
         {
             if (object.isMesh)
             {
-                // Create mesh list
+                // Create meshes list
                 meshName = object.name;
                 if (!meshList[meshName])
                 {
@@ -294,8 +292,8 @@ function initCameraControls()
     cameraControlsO.setBoundary(sceneBBox);
     // Init position
     cameraBoundsP = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
-    cameraBoundsP.center.copy(sceneTargetP);
     cameraBoundsO = CameraControls.createBoundingSphere(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12)));
+    cameraBoundsP.center.copy(sceneTargetP);
     cameraBoundsO.center.copy(sceneTargetO);
     cameraControlsP.setLookAt(-3.56, 9, 7.47, sceneTargetP.x, sceneTargetP.y, sceneTargetP.z, true);
     cameraControlsO.setLookAt(0.7, 8, -4.65, sceneTargetO.x, sceneTargetO.y, sceneTargetO.z, true);
@@ -316,9 +314,9 @@ window.addEventListener('resize', () =>
 	cameraO.bottom = height / -cameraOValue;
     cameraO.updateProjectionMatrix();
     renderer.setSize(width, height);
-    renderer.setPixelRatio(gui.settings.pixelRatio);
+    renderer.setPixelRatio(pane.settings.pixelRatio);
     composer.setSize(width, height);
-    composer.setPixelRatio(gui.settings.pixelRatio);
+    composer.setPixelRatio(pane.settings.pixelRatio);
     cameraControlsP.fitToSphere(cameraBoundsP, true);
     cameraControlsO.fitToSphere(cameraBoundsO, true);
 });
@@ -326,7 +324,8 @@ window.addEventListener('resize', () =>
 ///// Render /////
 function renderScene()
 {
-    gui.fps.begin();
+    pane.fps.begin();
+
     const delta = clock.getDelta();
     // Animation mixer
     if (mixer)
@@ -342,7 +341,8 @@ function renderScene()
     taaPassP.enabled = (logic.cameraProjection === 'persp');
     taaPassO.enabled = (logic.cameraProjection === 'ortho');
 
-    gui.fps.end();
+    pane.fps.end();
+
     requestAnimationFrame(renderScene);
     composer.render();
 };
