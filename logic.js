@@ -334,11 +334,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorAClosed === true)
             {
-                gsap.to(locks[0], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[0], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[0].classList.add('lock-pressed')
-                    gsap.to(locks[0], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[0], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[0].timeScale = 1;
@@ -348,11 +348,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorAClosed = false;
             } else
             {
-                gsap.to(locks[0], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[0], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[0].classList.remove('lock-pressed')
-                    gsap.to(locks[0], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[0], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[0].timeScale = -1;
@@ -369,11 +369,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorBClosed === true)
             {
-                gsap.to(locks[1], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[1], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[1].classList.add('lock-pressed')
-                    gsap.to(locks[1], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[1], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[1].timeScale = 1;
@@ -383,11 +383,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorBClosed = false;
             } else
             {
-                gsap.to(locks[1], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[1], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[1].classList.remove('lock-pressed')
-                    gsap.to(locks[1], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[1], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[1].timeScale = -1;
@@ -404,11 +404,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorCClosed === true)
             {
-                gsap.to(locks[2], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[2], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[2].classList.add('lock-pressed')
-                    gsap.to(locks[2], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[2], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[2].timeScale = 1;
@@ -418,11 +418,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorCClosed = false;
             } else
             {
-                gsap.to(locks[2], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[2], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[2].classList.remove('lock-pressed')
-                    gsap.to(locks[2], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[2], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[2].timeScale = -1;
@@ -439,11 +439,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorDClosed === true)
             {
-                gsap.to(locks[3], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[3], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[3].classList.add('lock-pressed')
-                    gsap.to(locks[3], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[3], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[3].timeScale = 1;
@@ -453,11 +453,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorDClosed = false;
             } else
             {
-                gsap.to(locks[3], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[3], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[3].classList.remove('lock-pressed')
-                    gsap.to(locks[3], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[3], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[3].timeScale = -1;
@@ -474,11 +474,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (doorEClosed === true)
             {
-                gsap.to(locks[4], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[4], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[4].classList.add('lock-pressed')
-                    gsap.to(locks[4], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[4], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[4].timeScale = 1;
@@ -488,11 +488,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 doorEClosed = false;
             } else
             {
-                gsap.to(locks[4], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[4], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[4].classList.remove('lock-pressed')
-                    gsap.to(locks[4], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[4], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[4].timeScale = -1;
@@ -509,11 +509,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
         {
             if (WindowAClosed === true)
             {
-                gsap.to(locks[5], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[5], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[5].classList.add('lock-pressed')
-                    gsap.to(locks[5], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[5], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[5].timeScale = 1;
@@ -525,11 +525,11 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
                 WindowAClosed = false;
             } else
             {
-                gsap.to(locks[5], {rotationY: 90, duration: 0.3, ease: "power1.in",
+                gsap.to(locks[5], {rotationY: 90, duration: 0.15, ease: "power1.in",
                 onComplete: () =>
                 {
                     locks[5].classList.remove('lock-pressed')
-                    gsap.to(locks[5], {rotationY: 0, duration: 0.3, ease: "power1.out"});
+                    gsap.to(locks[5], {rotationY: 0, duration: 0.15, ease: "power1.out"});
                 }
                 });
                 actions[5].timeScale = -1;

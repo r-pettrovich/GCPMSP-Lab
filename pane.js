@@ -42,7 +42,7 @@ let mats =
     ceramicR: 0.3,
     metalC: 0xb1b4b5,
     metalR: 0.45,
-    aoIntensity: 0.65
+    aoIntensity: 0.7
 };
 
 ///// Main function /////
