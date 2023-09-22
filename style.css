@@ -330,7 +330,7 @@
         --sign-font-size: 12px;
         --menu-button-size: 50px;
         --zones-label-width: 180px;
-        --zones-p-font-size: 14px;
+        --zones-p-font-size: 13px;
     }
 }
 
@@ -348,7 +348,7 @@
         --zones-height: 100px;
         --zones-label-width: 200px;
         --zones-color-square-size: 25px;
-        --zones-p-font-size: 16px;
+        --zones-p-font-size: 15px;
         --lock-size: 26px;
     }
 }
