@@ -1,9 +1,9 @@
 //settings
 export default {
-    publicDir: './public',
+    base: '/lab',
+    assetsInclude: ['**/*.glb', '**/*.hdr'],
     build:
     {
-        outDir: './dist',
         chunkSizeWarningLimit: 2000,
     },
     server:

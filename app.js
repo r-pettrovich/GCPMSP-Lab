@@ -1,4 +1,3 @@
-import './style.css';
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import {getGPUTier} from 'detect-gpu';
@@ -14,6 +13,9 @@ import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 import {BrightnessContrastShader} from 'three/addons/shaders/BrightnessContrastShader.js';
 import * as pane from './pane.js';
 import * as logic from './logic.js';
+import './style.css';
+import glbModel from './assets/GCPMSP_Lab.glb';
+import hdrImage from './assets/environment.hdr';
 
 let cameraControlsP, cameraControlsO, cameraBoundsP, cameraBoundsO, sceneTargetP, sceneTargetO, frameTargetP, frameTargetO, sceneBBox, frameBBox, sceneBBoxMesh, frameBBoxMesh;
 let mixer, animationsList = [], meshName, meshList = [], materialName, materialsList = [], axisHelper = new THREE.AxesHelper();
@@ -193,10 +195,10 @@ function loadApp()
     };
 
     // Loading scene
-    const ktx2 = new KTX2Loader().setTranscoderPath('./assets/').detectSupport(renderer);
+    const ktx2 = new KTX2Loader().setTranscoderPath('./').detectSupport(renderer);
     const gltfLoader = new GLTFLoader(manager);
     gltfLoader.setKTX2Loader(ktx2);
-    gltfLoader.load('./assets/GCPMSP_Lab.glb',
+    gltfLoader.load(glbModel,
     (gltf) =>
     {
         scene.add(gltf.scene);
@@ -241,7 +243,7 @@ function loadApp()
     });
 
     // Loading HDRI environment
-    new RGBELoader(manager).load('./assets/environment.hdr',
+    new RGBELoader(manager).load(hdrImage,
     (hdri) =>
     {
         pmremGenerator = new THREE.PMREMGenerator(renderer);

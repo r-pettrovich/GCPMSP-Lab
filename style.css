@@ -79,7 +79,7 @@
     height: 100%;
     top: 0px;
     left: 0px;
-    background-image: url('/assets/lock-open.svg');
+    background-image: url('./assets/lock-open.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100%;
@@ -88,7 +88,7 @@
 }
 
 .lock-pressed {
-    background-image: url('/assets/lock-close.svg');
+    background-image: url('./assets/lock-close.svg');
 }
 
 .top {
@@ -121,7 +121,7 @@
     height: var(--logo-size);
     position: relative;
     margin: var(--logo-margin);
-    background-image: url('/assets/lab-logo.svg');
+    background-image: url('./assets/lab-logo.svg');
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -221,7 +221,7 @@
     border: var(--menu-button-border) solid var(--gcpmsp-color);
     border-radius: 5px;
     margin-right: 10px;
-    background-image: url('/assets/building-x.svg');
+    background-image: url('./assets/building-x.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 80%;
@@ -230,24 +230,24 @@
 }
 
 .button-building-pressed {
-    background-image: url('/assets/building.svg');
+    background-image: url('./assets/building.svg');
 }
 
 .button-zones {
-    background-image: url('/assets/bookmark.svg');
+    background-image: url('./assets/bookmark.svg');
     background-size: 75%;
 }
 
 .button-zones-pressed {
-    background-image: url('/assets/bookmark-x.svg');
+    background-image: url('./assets/bookmark-x.svg');
 }
 
 .button-camera {
-    background-image: url('/assets/camera-o.svg');
+    background-image: url('./assets/camera-o.svg');
 }
 
 .button-camera-pressed {
-    background-image: url('/assets/camera-p.svg');
+    background-image: url('./assets/camera-p.svg');
 }
 
 .preloader {
@@ -272,7 +272,7 @@
     height: 160px;
     margin-bottom: 10px;
     position: relative;
-    background-image: url('/assets/lab-logo.svg');
+    background-image: url('./assets/lab-logo.svg');
 }
 
 .preloader-bar-container {
@@ -295,7 +295,7 @@
     left: 0px;
     margin: 0px;
     position: absolute;
-    background: url('/assets/rotate-device.svg'), var(--canvas-background);
+    background: url('./assets/rotate-device.svg'), var(--canvas-background);
     background-repeat: no-repeat;
     background-position: center, center;
     background-size: 30%, 100%;
@@ -309,7 +309,7 @@
     height: 140px;
     margin-bottom: 8px;
     position: relative;
-    background-image: url('/assets/warning.svg');
+    background-image: url('./assets/warning.svg');
 }
 
 .webgl-block-p {
