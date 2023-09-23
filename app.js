@@ -138,7 +138,6 @@ function checkDevice()
                 taaPassP.sampleLevel = taaPassO.sampleLevel = pane.settings.taaLevel = 1;
             }
         };
-        logic.toggleDeviceBlock(device, orientation);
         appIsLoaded = true;
         loadApp();
     };
@@ -150,17 +149,17 @@ function checkOrientation()
     if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === false)
     {
         orientation = 'portrait';
-        logic.toggleDeviceBlock(device, orientation);
+        logic.toggleOrientationBlock(orientation);
         appIsLoaded = true;
         loadApp();
     } else if (window.matchMedia('(orientation: portrait)').matches && appIsLoaded === true)
     {
         orientation = 'portrait';
-        logic.toggleDeviceBlock(device, orientation);
+        logic.toggleOrientationBlock(orientation);
     } else if (window.matchMedia('(orientation: landscape)').matches)
     {
         orientation = 'landscape'
-        logic.toggleDeviceBlock(device, orientation);
+        logic.toggleOrientationBlock(orientation);
     };
 };
 
@@ -305,7 +304,10 @@ function initCameraControls()
 ///// Window resized /////
 window.addEventListener('resize', () =>
 {
-    checkOrientation();
+    if (device === 'mobile')
+    {
+        checkOrientation();
+    };
     width = window.innerWidth;
     height = window.innerHeight;
     cameraP.aspect = width / height;

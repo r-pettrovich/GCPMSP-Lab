@@ -6,18 +6,15 @@ let buttonBuilding = document.getElementById('button-building'), buttonZones = d
 export let cameraProjection = 'persp';
 
 ///// Toggle device block /////
-export function toggleDeviceBlock (device, orientation)
+export function toggleOrientationBlock (orientation)
 {
-    if (device === 'desktop')
+    if (orientation === 'portrait')
     {
-        gsap.set('#device-block', {display: 'none'});
-    } else if (orientation === 'portrait')
-    {
-        gsap.set('#device-block', {display: 'none'});
+        gsap.set('#orientation-block', {display: 'none'});
     } else if (orientation === 'landscape')
     {
-        gsap.set('#device-block', {display: 'block'});
-    }
+        gsap.set('#orientation-block', {display: 'block'});
+    };
 };
 
 ///// Update loading bar /////
@@ -34,7 +31,7 @@ export function updateLoadingBar (progress, startDelay)
         // Toggle UI
         gsap.set('#top', {display: 'flex'});
         gsap.set('#menu', {display: 'flex'});
-        gsap.set('#zones', {display: 'flex'});
+        gsap.set('#zones', {display: 'grid'});
     };
 };
 
@@ -107,9 +104,15 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
     {
         if (buildingVisible === true)
         {
-            gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to(buttonBuilding, {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.add('button-building-pressed');
-            buttonBuilding.title = "Показать здание";
+            if (lang === 'ru')
+            {
+                buttonBuilding.title = "Показать здание";
+            } else if (lang === 'en')
+            {
+                buttonBuilding.title = "Show Building";
+            };
             floorFrame.visible = true;
             building.visible = false;
             zonesBuilding.visible = false;
@@ -153,9 +156,15 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             };
         } else
         {
-            gsap.to('#button-building', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to(buttonBuilding, {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonBuilding.classList.remove('button-building-pressed');
-            buttonBuilding.title = "Скрыть здание";
+            if (lang === 'ru')
+            {
+                buttonBuilding.title = "Скрыть здание";
+            } else if (lang === 'en')
+            {
+                buttonBuilding.title = "Hide Building";
+            };
             setTimeout(() =>
             {
                 floorFrame.visible = false;
@@ -210,10 +219,16 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
     {
         if (zonesVisible === false)
         {
-            gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to(buttonZones, {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             gsap.to('#zones', {yPercent: 100, opacity: 1, duration: 0.5, ease: 'power2.out'});
             buttonZones.classList.add('button-zones-pressed');
-            buttonZones.title = "Скрыть зоны";
+            if (lang === 'ru')
+            {
+                buttonZones.title = "Скрыть зоны";
+            } else if (lang === 'en')
+            {
+                buttonZones.title = "Hide Zones";
+            };
             if (buildingVisible === true)
             {
                 zonesBuilding.visible = true;
@@ -225,10 +240,16 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             zonesVisible = true;
         } else
         {
-            gsap.to('#button-zones', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to(buttonZones, {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             gsap.to('#zones', {yPercent: -100, opacity: 0, duration: 0.5, ease: 'power2.in'});
             buttonZones.classList.remove('button-zones-pressed');
-            buttonZones.title = "Показать зоны";
+            if (lang === 'ru')
+            {
+                buttonZones.title = "Показать зоны";
+            } else if (lang === 'en')
+            {
+                buttonZones.title = "Show Zones";
+            };
             zonesBuilding.visible = false;
             zonesFrame.visible = false;
             zonesVisible = false;
@@ -239,9 +260,15 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
     {
         if (cameraProjection === 'persp')
         {
-            gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to(buttonCamera, {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonCamera.classList.add('button-camera-pressed');
-            buttonCamera.title = "Перспективная проекция";
+            if (lang === 'ru')
+            {
+                buttonCamera.title = "Перспективная проекция";
+            } else if (lang === 'en')
+            {
+                buttonCamera.title = "Perspective Projection";
+            };
             cameraProjection = 'ortho';
             // Camera behavior
             if (buildingVisible === true)
@@ -283,9 +310,15 @@ export function updateActions (device, scene, cameraControlsP, cameraControlsO, 
             };
         } else
         {
-            gsap.to('#button-camera', {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
+            gsap.to(buttonCamera, {scale: 0.93, duration: 0.08, repeat: 1, yoyo: true, ease: "power1.out"});
             buttonCamera.classList.remove('button-camera-pressed');
-            buttonCamera.title = "Ортографическая проекция";
+            if (lang === 'ru')
+            {
+                buttonCamera.title = "Ортографическая проекция";
+            } else if (lang === 'en')
+            {
+                buttonCamera.title = "Orthographic Projection";
+            };
             cameraProjection = 'persp';
             // Camera behavior
             if (buildingVisible === true)

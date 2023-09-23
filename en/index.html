@@ -6,9 +6,10 @@
     <link rel="icon" type="image/svg+xml" href="/assets/lab-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta name="author" content="Rinat Chubarov">
-    <title>City Center</title>
+    <title>Karaganda Center of Primary Medical and Sanitary Care</title>
   </head>
   <body class="body">
+    <script> const lang = 'en';</script>
     <script type="module" src="/app.js"></script>
     <div id="webgl" class="webgl"></div>
     <div id="pane" class="pane" style="display: none;"></div>
@@ -36,7 +37,7 @@
       <div id="label" class="label">
         <div id="logo" class="logo"></div>
         <div id="title" class="title">
-          <h3 class="title-p">City Center</h3>
+          <h3 class="title-p">Karaganda Center of Primary Medical and Sanitary Care</h3>
         </div>
       </div>
     </div>
@@ -48,22 +49,22 @@
       </div>
       <div class="zones-label">
         <div class="zones-color-square" style="background-color: rgb(122, 197, 169);"></div>
-        <p class="zones-p">- Clean Area</p>
+        <p class="zones-p">- Clean Zone</p>
       </div>
       <div class="zones-label">
         <div class="zones-color-square" style="background-color: rgb(221, 210, 115);"></div>
-        <p class="zones-p">- Semi-Contaminated Area</p>
+        <p class="zones-p">- Semi-Contaminated Zone</p>
       </div>
       <div class="zones-label">
         <div class="zones-color-square" style="background-color: rgb(223, 157, 94);"></div>
-        <p class="zones-p">- Dirty Area</p>
+        <p class="zones-p">- Dirty Zone</p>
       </div>
     </div>
     <!-- Menu object -->
     <div id="menu" class="menu" style="display: none;">
-      <div id="button-building" class="button-building" title="Скрыть здание"></div>
-      <div id="button-zones" class="button-building button-zones" title="Показать зоны"></div>
-      <div id="button-camera" class="button-building button-camera" title="Ортографическая проекция"></div>
+      <div id="button-building" class="button-building" title="Hide Building"></div>
+      <div id="button-zones" class="button-building button-zones" title="Show Zones"></div>
+      <div id="button-camera" class="button-building button-camera" title="Orthographic projection"></div>
     </div>
     <!-- Preloader -->
     <div id="preloader" class="preloader">
@@ -73,7 +74,7 @@
       </div>
     </div>
     <!-- Orientation block -->
-    <div id="device-block" class="device-block" style="display: none;"></div>
+    <div id="orientation-block" class="orientation-block" style="display: none;"></div>
     <!-- WebGL block -->
     <div id="webgl-block" class="preloader" style="z-index: 200; display: none;">
       <div id="webgl-block-logo" class="webgl-block-logo"></div>
