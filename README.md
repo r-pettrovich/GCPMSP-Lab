@@ -1,7 +1,7 @@
 # GCPMSP-Lab
 A WebGL laboratory expansion project for a Karaganda Center of Primary Medical and Sanitary Care, based on [three.js](https://github.com/mrdoob/three.js/). Designed for 3D visualization of the laboratory expansion plan within the constraints of the existing clinic building's limited space.
 
-![preview](https://github.com/r-pettrovich/GCPMSP-Lab/assets/preview.png)
+![preview](https://github.com/r-pettrovich/GCPMSP-Lab/assets/9007540/d01d2dd1-ab18-47df-8644-44643b86f579)
 
 ## Features
 
