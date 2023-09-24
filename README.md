@@ -10,6 +10,7 @@ A WebGL laboratory expansion project for a Karaganda Center of Primary Medical a
 * Smooth camera with transitions based on [camera-controls](https://github.com/yomotsu/camera-controls)
 * Scene setup and debugging panel, hidden from end-user. Press 'PPP' on keyboard to unhide. Based on [tweakpane](https://github.com/cocopon/tweakpane)
 * TAA level auto-selection depending on device performance based on [detect-gpu](https://github.com/pmndrs/detect-gpu)
+* KTX textures compression using [glTF Transform](https://github.com/donmccurdy/glTF-Transform)
 
 ## Live Demo
 [GCPMSP-Lab](https://gcpmsp.kz/lab/en/)
