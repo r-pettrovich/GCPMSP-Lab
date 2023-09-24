@@ -1,8 +1,10 @@
 {
   "name": "gcpmsp-lab",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1",
   "type": "module",
+  "author": "Rinat Chubarov",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
